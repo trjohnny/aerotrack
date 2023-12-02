@@ -1,10 +1,10 @@
-package org.example;
+package com.aerotrack;
 
 /**
  * Hello world!
  *
  */
-public class App 
+public class AerotrackApp
 {
     public static void main( String[] args )
     {
