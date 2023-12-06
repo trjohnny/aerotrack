@@ -1,5 +1,5 @@
 // Main
-package com.aerotrack;
+package com.aerotrack.console;
 
 import javax.swing.SwingUtilities;
 
