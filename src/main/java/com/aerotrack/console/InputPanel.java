@@ -1,8 +1,11 @@
 // InputPanel contiene il codice per la costruzione del riquadro degli input
-package com.aerotrack;
+package com.aerotrack.console;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTextField;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.awt.GridLayout;
+import java.awt.Component;
 
 public class InputPanel {
     private final JPanel panel;

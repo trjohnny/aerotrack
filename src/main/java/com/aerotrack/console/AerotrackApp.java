@@ -1,9 +1,18 @@
 // AerotrackConsole costituisce il pannello principale della console
-package com.aerotrack;
+package com.aerotrack.console;
 
-import javax.swing.*;
-import javax.swing.text.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -72,7 +81,7 @@ public class AerotrackApp extends JFrame {
 
     void submitFlightInfo(FlightInfoFields flightInfoFields) {
 
-        Set<String> uniqueDepartures = new HashSet<String>();
+        Set<String> uniqueDepartures = new HashSet<>();
         boolean isValid = true;
 
         for (JTextField departureField : flightInfoFields.getDepartureFields()) {
@@ -112,7 +121,7 @@ public class AerotrackApp extends JFrame {
 
         if (isValid && !startDateString.isEmpty() && !endDateString.isEmpty() && !durationString.isEmpty()) {
             addStyledText("Flight booked from " + flightInfoFields.getDepartureAirports() +
-                    " from " + startDateString + " to " + endDateString + " (Duration: " + durationString + " days)\n",null);
+                    " from " + startDateString + " to " + endDateString + " (Duration: " + durationString + " days)\n", null);
         } else {
             appendErrorText("Please fill in all fields.");
         }
