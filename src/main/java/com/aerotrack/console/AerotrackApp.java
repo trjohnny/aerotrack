@@ -19,6 +19,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.aerotrack.model.ScanQueryRequest;
+import com.aerotrack.model.ScanQueryResponse;
+
 
 public class AerotrackApp extends JFrame {
     private final JTextPane textPane;
