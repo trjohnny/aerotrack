@@ -1,9 +1,12 @@
 // InputPanel contiene il codice per la costruzione del riquadro degli input
-package com.aerotrack.console;
+package com.aerotrack.console.initial_console.component;
 
-import javax.swing.JTextField;
+import com.aerotrack.console.initial_console.AerotrackApp;
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JCheckBox;
 import java.awt.GridLayout;
 import java.awt.Component;
 
@@ -31,10 +34,18 @@ public class InputPanel {
         panel.add(endDateLabel);
         panel.add(endDateField);
 
-        JLabel durationLabel = new JLabel("Duration (days):");
-        JTextField durationField = flightInfoFields.getDurationField();
-        panel.add(durationLabel);
-        panel.add(durationField);
+        JLabel minDaysDurationLabel = new JLabel("Min duration of the trip (days):");
+        JTextField minDaysDurationField = flightInfoFields.getMinDaysField();
+        panel.add(minDaysDurationLabel);
+        panel.add(minDaysDurationField);
+
+        JLabel maxDaysDurationLabel = new JLabel("Max duration of the trip  (days):");
+        JTextField maxDaysDurationField = flightInfoFields.getMaxDaysField();
+        panel.add(maxDaysDurationLabel);
+        panel.add(maxDaysDurationField);
+
+        JCheckBox returnToSameAirportCheckBox = flightInfoFields.getReturnToSameAirportCheckBox();
+        panel.add(returnToSameAirportCheckBox);
     }
 
     public JPanel getPanel() {
