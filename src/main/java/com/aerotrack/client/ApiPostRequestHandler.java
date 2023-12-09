@@ -1,5 +1,6 @@
 package com.aerotrack.client;
 
+import com.aerotrack.Exceptions.ApiRequestException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -10,17 +11,17 @@ import java.net.http.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ApiRequestHandler {
+public class ApiPostRequestHandler {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
-    public ApiRequestHandler() {
+    public ApiPostRequestHandler() {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper();
     }
 
-    public <T> T sendRequest(String endpointUrl, String apiKey, Object requestObject, Class<T> responseType) {
+    public <T> T sendPostRequest(String endpointUrl, String apiKey, Object requestObject, Class<T> responseType) {
         try {
             String requestBody = objectMapper.writeValueAsString(requestObject);
             HttpRequest request = HttpRequest.newBuilder()
