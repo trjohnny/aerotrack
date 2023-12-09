@@ -1,8 +1,8 @@
 // ButtonManager si occupa di creazione+logica dei bottoni
-package com.aerotrack.console.initial_console.component;
+package com.aerotrack.console.initialConsole.components;
 
 import com.aerotrack.client.ApiGatewayClient;
-import com.aerotrack.console.initial_console.AerotrackApp;
+import com.aerotrack.console.initialConsole.ScanInputView;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -17,7 +17,7 @@ public class ButtonManager {
     private final FlightInfoFields flightInfoFields;
     private final ActionHandler actionHandler;
 
-    public ButtonManager(AerotrackApp parent, InputPanel airportPanel, FlightInfoFields flightInfoFields, ApiGatewayClient apiGatewayClient, JTextPane textPane) {
+    public ButtonManager(ScanInputView parent, InputPanel airportPanel, FlightInfoFields flightInfoFields, JTextPane textPane) {
         this.flightInfoFields = flightInfoFields;
 
         actionHandler = new ActionHandler(flightInfoFields);
@@ -60,7 +60,7 @@ public class ButtonManager {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionHandler.submitFlightInfo(apiGatewayClient, parent, textPane);
+                actionHandler.submitFlightInfo(parent, textPane);
             }
         });
 

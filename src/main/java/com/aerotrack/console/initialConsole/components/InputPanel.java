@@ -1,7 +1,7 @@
 // InputPanel contiene il codice per la costruzione del riquadro degli input
-package com.aerotrack.console.initial_console.component;
+package com.aerotrack.console.initialConsole.components;
 
-import com.aerotrack.console.initial_console.AerotrackApp;
+import com.aerotrack.console.initialConsole.ScanInputView;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -12,10 +12,10 @@ import java.awt.Component;
 
 public class InputPanel {
     private final JPanel panel;
-    private final AerotrackApp parent;
+    private final ScanInputView parent;
     private final FlightInfoFields flightInfoFields;
 
-    public InputPanel(AerotrackApp parent, FlightInfoFields flightInfoFields) {
+    public InputPanel(ScanInputView parent, FlightInfoFields flightInfoFields) {
         this.parent = parent;
         this.flightInfoFields = flightInfoFields;
 

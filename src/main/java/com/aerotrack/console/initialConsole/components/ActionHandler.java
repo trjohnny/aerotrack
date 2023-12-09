@@ -1,14 +1,15 @@
-package com.aerotrack.console.initial_console.component;
+package com.aerotrack.console.initialConsole.components;
 
 import com.aerotrack.client.ApiGatewayClient;
-import com.aerotrack.console.final_console.ResultsConsole;
-import com.aerotrack.console.initial_console.AerotrackApp;
+import com.aerotrack.console.finalConsole.ScanOutputView;
+import com.aerotrack.console.initialConsole.ScanInputView;
 import com.aerotrack.model.ScanQueryRequest;
 import com.aerotrack.model.ScanQueryResponse;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingWorker;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,13 +27,16 @@ import static com.aerotrack.utils.Utils.appendErrorText;
 public class ActionHandler {
 
     private final FlightInfoFields flightInfoFields;
+    private final ApiGatewayClient apiGatewayClient;
+
 
     public ActionHandler(FlightInfoFields flightInfoFields){
         this.flightInfoFields = flightInfoFields;
+        apiGatewayClient = new ApiGatewayClient();
     }
 
 
-    public void submitFlightInfo(ApiGatewayClient apiGatewayClient, AerotrackApp parent, JTextPane textPane) {
+    public void submitFlightInfo(ScanInputView parent, JTextPane textPane) {
 
         String startDateString = flightInfoFields.getStartDateField().getText();
         String endDateString = flightInfoFields.getEndDateField().getText();
@@ -71,10 +75,17 @@ public class ActionHandler {
         // Controlli date
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
+            Date today = new Date();
             Date startDate = dateFormat.parse(startDateString);
             Date endDate = dateFormat.parse(endDateString);
             int minDuration = Integer.parseInt(minDurationString);
             int maxDuration = Integer.parseInt(maxDurationString);
+
+            // Controllo che la data di partenza sia maggiore di quella attuale
+            if (startDate.before(today)) {
+                appendErrorText("Error: Start date must be equal or after the today's date.",textPane);
+                return;
+            }
 
             // Controllo che la end date sia successiva alla start date
             if (endDate.before(startDate)) {
@@ -105,27 +116,41 @@ public class ActionHandler {
         // Costruisci l'oggetto ScanQueryRequest
         ScanQueryRequest scanQueryRequest = buildScanQueryRequest(flightInfoFields);
 
-        try {
-            // Effettua la chiamata API utilizzando la classe ApiGatewayClient
-            ScanQueryResponse response = apiGatewayClient.sendScanQueryRequest(scanQueryRequest);
-            log.info(response.toString());
-            // Controlla la risposta ottenuta
-            if (response != null) {
-                // La chiamata è andata a buon fine, puoi gestire la risposta qui
-                // Ad esempio, puoi visualizzare i risultati nella console dei risultati
-                ResultsConsole resultsConsole = new ResultsConsole(response.getFlightPairs());
-            } else {
-                // La chiamata ha restituito una risposta nulla, gestisci l'errore
-                appendErrorText("Error: Failed to get valid response from API.",textPane);
+        // Crea un oggetto SwingWorker per eseguire la chiamata API in background
+        SwingWorker<ScanQueryResponse, Void> worker = new SwingWorker<>() {
+            @Override
+            protected ScanQueryResponse doInBackground() throws Exception {
+                // Effettua la chiamata API utilizzando la classe ApiGatewayClient
+                return apiGatewayClient.sendScanQueryRequest(scanQueryRequest);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Gestisci l'eccezione
-            appendErrorText("Error: An exception occurred during API call.",textPane);
-        }
+            @Override
+            protected void done() {
+                try {
+                    // Ottieni il risultato dell'operazione in background
+                    ScanQueryResponse response = get();
 
+                    // Controlla la risposta ottenuta
+                    if (response != null) {
+                        // La chiamata è andata a buon fine, puoi gestire la risposta qui
+                        // Ad esempio, puoi visualizzare i risultati nella console dei risultati
+                        ScanOutputView scanOutputView = new ScanOutputView(response.getFlightPairs());
+                    } else {
+                        // La chiamata ha restituito una risposta nulla, gestisci l'errore
+                        appendErrorText("Error: Failed to get valid response from API.", textPane);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // Gestisci l'eccezione
+                    appendErrorText("Error: An exception occurred during API call.", textPane);
+                }
+            }
+        };
+
+        // Avvia il lavoro in background
+        worker.execute();
     }
+
     public ScanQueryRequest buildScanQueryRequest(FlightInfoFields flightInfoFields) {
         ScanQueryRequest.ScanQueryRequestBuilder builder = ScanQueryRequest.builder();
 
