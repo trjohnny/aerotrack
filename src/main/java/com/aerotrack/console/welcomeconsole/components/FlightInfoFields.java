@@ -1,5 +1,5 @@
 // FlightInfoFields tiene traccia di tutti field in cui vengono inseriti i dati in input
-package com.aerotrack.console.initialConsole.components;
+package com.aerotrack.console.welcomeconsole.components;
 
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;

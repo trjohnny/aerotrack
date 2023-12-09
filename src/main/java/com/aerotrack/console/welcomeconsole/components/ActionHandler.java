@@ -1,10 +1,9 @@
-package com.aerotrack.console.initialConsole.components;
+package com.aerotrack.console.welcomeconsole.components;
 
 import com.aerotrack.client.ApiGatewayClient;
-import com.aerotrack.console.finalConsole.ScanOutputView;
-import com.aerotrack.console.initialConsole.ScanInputView;
-import com.aerotrack.model.ScanQueryRequest;
-import com.aerotrack.model.ScanQueryResponse;
+import com.aerotrack.console.resultconsole.ScanOutputView;
+import com.aerotrack.console.welcomeconsole.ScanInputView;
+import com.aerotrack.model.FlightPair;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -49,6 +48,9 @@ public class ActionHandler {
                 departureAirports.add(departureAirport);
             }
         }
+        List<String> destinationAirports = new ArrayList<>();
+        destinationAirports.add("DUB");
+
         //controllo che i campi siano pieni
         if (startDateString.isEmpty() || endDateString.isEmpty() || minDurationString.isEmpty() || maxDurationString.isEmpty() || departureAirports.isEmpty()){
             appendErrorText("Please fill in all fields.",textPane);
@@ -113,28 +115,21 @@ public class ActionHandler {
             return;
         }
 
-        // Costruisci l'oggetto ScanQueryRequest
-        ScanQueryRequest scanQueryRequest = buildScanQueryRequest(flightInfoFields);
-
-        // Crea un oggetto SwingWorker per eseguire la chiamata API in background
-        SwingWorker<ScanQueryResponse, Void> worker = new SwingWorker<>() {
+        SwingWorker<List<FlightPair>, Void> worker = new SwingWorker<>() {
             @Override
-            protected ScanQueryResponse doInBackground() throws Exception {
-                // Effettua la chiamata API utilizzando la classe ApiGatewayClient
-                return apiGatewayClient.sendScanQueryRequest(scanQueryRequest);
+            protected List<FlightPair> doInBackground() throws Exception {
+                return apiGatewayClient.getBestFlight(startDateString, endDateString, minDurationString, maxDurationString, departureAirports, flightInfoFields.getReturnToSameAirportCheckBoxValue(), destinationAirports);
             }
 
             @Override
             protected void done() {
                 try {
-                    // Ottieni il risultato dell'operazione in background
-                    ScanQueryResponse response = get();
+                    List<FlightPair> flightPairs = get();
 
-                    // Controlla la risposta ottenuta
-                    if (response != null) {
+                    if (flightPairs != null) {
                         // La chiamata è andata a buon fine, puoi gestire la risposta qui
                         // Ad esempio, puoi visualizzare i risultati nella console dei risultati
-                        ScanOutputView scanOutputView = new ScanOutputView(response.getFlightPairs());
+                        ScanOutputView scanOutputView = new ScanOutputView(flightPairs);
                     } else {
                         // La chiamata ha restituito una risposta nulla, gestisci l'errore
                         appendErrorText("Error: Failed to get valid response from API.", textPane);
@@ -151,26 +146,4 @@ public class ActionHandler {
         worker.execute();
     }
 
-    public ScanQueryRequest buildScanQueryRequest(FlightInfoFields flightInfoFields) {
-        ScanQueryRequest.ScanQueryRequestBuilder builder = ScanQueryRequest.builder();
-
-        // Imposta i valori dal flightInfoFields
-        builder.minDays(Integer.valueOf(flightInfoFields.getMinDaysField().getText()));
-        builder.maxDays(Integer.valueOf(flightInfoFields.getMaxDaysField().getText()));
-        builder.availabilityStart(flightInfoFields.getStartDateField().getText());
-        builder.availabilityEnd(flightInfoFields.getEndDateField().getText());
-        List<String> departureAirports = new ArrayList<>();
-        for (JTextField departureField : flightInfoFields.getDepartureFields()) {
-            String departureAirport = departureField.getText().trim();
-            if (!departureAirport.isEmpty()) {
-                departureAirports.add(departureAirport);
-            }
-        }
-        builder.departureAirports(departureAirports);
-        builder.returnToSameAirport(flightInfoFields.getReturnToSameAirportCheckBoxValue());
-        List<String> destinationAirports = new ArrayList<>();
-        destinationAirports.add("DUB");
-        builder.destinationAirports(destinationAirports);
-        return builder.build();
-    }
 }

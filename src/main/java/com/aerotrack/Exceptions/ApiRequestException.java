@@ -1,4 +1,4 @@
-package com.aerotrack.client;
+package com.aerotrack.Exceptions;
 
 public class ApiRequestException extends RuntimeException {
 

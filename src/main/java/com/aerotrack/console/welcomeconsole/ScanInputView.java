@@ -1,15 +1,14 @@
 // AerotrackConsole costituisce il pannello principale della console
-package com.aerotrack.console.initialConsole;
+package com.aerotrack.console.welcomeconsole;
 
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 
-import com.aerotrack.client.ApiGatewayClient;
-import com.aerotrack.console.initialConsole.components.ButtonManager;
-import com.aerotrack.console.initialConsole.components.FlightInfoFields;
-import com.aerotrack.console.initialConsole.components.InputPanel;
+import com.aerotrack.console.welcomeconsole.components.ButtonManager;
+import com.aerotrack.console.welcomeconsole.components.FlightInfoFields;
+import com.aerotrack.console.welcomeconsole.components.InputPanel;
 import com.aerotrack.utils.ResourceHelper;
 
 import static com.aerotrack.utils.Utils.addStyledText;

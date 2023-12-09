@@ -1,4 +1,4 @@
-package com.aerotrack.console.finalConsole;
+package com.aerotrack.console.resultconsole;
 
 import com.aerotrack.model.Flight;
 import com.aerotrack.model.FlightPair;
