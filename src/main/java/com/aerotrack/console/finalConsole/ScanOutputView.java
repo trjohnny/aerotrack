@@ -1,7 +1,8 @@
-package com.aerotrack.console.final_console;
+package com.aerotrack.console.finalConsole;
 
 import com.aerotrack.model.Flight;
 import com.aerotrack.model.FlightPair;
+import com.aerotrack.utils.ResourceHelper;
 
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
@@ -11,11 +12,11 @@ import java.util.List;
 
 import static com.aerotrack.utils.Utils.addStyledText;
 
-public class ResultsConsole extends JFrame {
+public class ScanOutputView extends JFrame {
 
     private final JTextPane textPane;
 
-    public ResultsConsole(List<FlightPair> flightPairs) {
+    public ScanOutputView(List<FlightPair> flightPairs) {
         setTitle("Results Console");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -28,10 +29,7 @@ public class ResultsConsole extends JFrame {
         JScrollPane scrollPane = new JScrollPane(textPane);
         add(scrollPane, BorderLayout.CENTER);
 
-        addStyledText("""
-                Here are the best flight options tailored to your preferences :)
-
-                """, null, textPane);
+        addStyledText(ResourceHelper.getString("resultMessage"), null, textPane);
 
         displayFlightPairs(flightPairs);
 

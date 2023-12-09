@@ -1,15 +1,15 @@
 // Main
-package com.aerotrack.console.initial_console;
+package com.aerotrack.console.initialConsole;
 
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.SwingUtilities;
 
 @Slf4j
-public class ConsoleAppMain {
+public class ConsoleMain {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            AerotrackApp aerotrackApp = new AerotrackApp();
+            ScanInputView scanInputView = new ScanInputView();
         });
     }
 }

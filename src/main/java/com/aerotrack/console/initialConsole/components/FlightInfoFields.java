@@ -1,5 +1,5 @@
 // FlightInfoFields tiene traccia di tutti field in cui vengono inseriti i dati in input
-package com.aerotrack.console.initial_console.component;
+package com.aerotrack.console.initialConsole.components;
 
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
@@ -15,18 +15,14 @@ public class FlightInfoFields {
     private final JCheckBox returnToSameAirportCheckBox;
 
 
+
     public FlightInfoFields() {
         departureFields = new ArrayList<>();
         startDateField = new JTextField(10);
-        startDateField.setText("2024-05-01");
         endDateField = new JTextField(10);
-        endDateField.setText("2024-07-15");
         minDaysField = new JTextField(10);
-        minDaysField.setText("5");
         maxDaysField = new JTextField(10);
-        maxDaysField.setText("15");
         returnToSameAirportCheckBox = new JCheckBox("Return to the same airport", false);
-
     }
 
     public JTextField getStartDateField() {
