@@ -9,6 +9,7 @@ import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import java.awt.GridLayout;
 import java.awt.Component;
+import org.jdatepicker.impl.JDatePickerImpl;
 
 public class InputPanel {
     private final JPanel panel;
