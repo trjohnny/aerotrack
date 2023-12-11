@@ -6,6 +6,7 @@ import javax.swing.JCheckBox;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class FlightInfoFields {
     private final List<JTextField> departureFields;
     private final JTextField startDateField;
@@ -19,29 +20,25 @@ public class FlightInfoFields {
     public FlightInfoFields() {
         departureFields = new ArrayList<>();
         startDateField = new JTextField(10);
+        startDateField.setText("2024-01-01");
         endDateField = new JTextField(10);
+        endDateField.setText("2024-12-10");
         minDaysField = new JTextField(10);
+        minDaysField.setText("1");
         maxDaysField = new JTextField(10);
+        maxDaysField.setText("15");
         returnToSameAirportCheckBox = new JCheckBox("Return to the same airport", false);
-    }
+        }
 
-    public JTextField getStartDateField() {
-        return startDateField;
-    }
-    public JTextField getEndDateField() {
-        return endDateField;
-    }
-    public JTextField getMinDaysField() {
-        return minDaysField;
-    }
+    public JTextField getStartDateField() {return startDateField;}
+    public JTextField getEndDateField() {return endDateField;}
+    public JTextField getMinDaysField() {return minDaysField;}
     public JTextField getMaxDaysField() {
         return maxDaysField;
     }
     public JCheckBox getReturnToSameAirportCheckBox() {
         return returnToSameAirportCheckBox;
     }
-
-
     public Boolean getReturnToSameAirportCheckBoxValue() {
         return returnToSameAirportCheckBox.isSelected();
     }

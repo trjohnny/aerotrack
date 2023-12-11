@@ -1,9 +1,9 @@
 package com.aerotrack.console.welcomeconsole.components;
 
-import com.aerotrack.client.ApiGatewayClient;
+import com.aerotrack.model.protocol.ScanQueryRequest;
+import com.aerotrack.utils.clients.apigateway.AerotrackApiClient;
 import com.aerotrack.console.resultconsole.ScanOutputView;
 import com.aerotrack.console.welcomeconsole.ScanInputView;
-import com.aerotrack.model.FlightPair;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -16,8 +16,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
 
+import com.aerotrack.model.entities.FlightPair;
+import lombok.extern.slf4j.Slf4j;
 
 import static com.aerotrack.utils.Utils.appendErrorText;
 
@@ -26,12 +27,12 @@ import static com.aerotrack.utils.Utils.appendErrorText;
 public class ActionHandler {
 
     private final FlightInfoFields flightInfoFields;
-    private final ApiGatewayClient apiGatewayClient;
+    private final AerotrackApiClient aerotrackApiClient;
 
 
     public ActionHandler(FlightInfoFields flightInfoFields){
         this.flightInfoFields = flightInfoFields;
-        apiGatewayClient = new ApiGatewayClient();
+        this.aerotrackApiClient = AerotrackApiClient.create();
     }
 
 
@@ -51,7 +52,7 @@ public class ActionHandler {
         List<String> destinationAirports = new ArrayList<>();
         destinationAirports.add("DUB");
 
-        //controllo che i campi siano pieni
+        // Controllo che i campi siano pieni
         if (startDateString.isEmpty() || endDateString.isEmpty() || minDurationString.isEmpty() || maxDurationString.isEmpty() || departureAirports.isEmpty()){
             appendErrorText("Please fill in all fields.",textPane);
             return;
@@ -115,10 +116,11 @@ public class ActionHandler {
             return;
         }
 
+        ScanQueryRequest scanQueryRequest = buildScanQueryRequest(minDurationString, maxDurationString, startDateString, endDateString, departureAirports, flightInfoFields.getReturnToSameAirportCheckBoxValue(), destinationAirports);
         SwingWorker<List<FlightPair>, Void> worker = new SwingWorker<>() {
             @Override
-            protected List<FlightPair> doInBackground() throws Exception {
-                return apiGatewayClient.getBestFlight(startDateString, endDateString, minDurationString, maxDurationString, departureAirports, flightInfoFields.getReturnToSameAirportCheckBoxValue(), destinationAirports);
+            protected List<FlightPair> doInBackground() {
+                return aerotrackApiClient.getBestFlight(scanQueryRequest);
             }
 
             @Override
@@ -141,9 +143,23 @@ public class ActionHandler {
                 }
             }
         };
-
         // Avvia il lavoro in background
         worker.execute();
+
+
+    }
+
+    public ScanQueryRequest buildScanQueryRequest(String minDurationString, String maxDurationString,String startDateString, String endDateString, List<String> departureAirports, Boolean returnToSameAirport, List<String> destinationAirports) {
+        ScanQueryRequest.ScanQueryRequestBuilder builder = ScanQueryRequest.builder();
+
+        builder.minDays(Integer.valueOf(minDurationString));
+        builder.maxDays(Integer.valueOf(maxDurationString));
+        builder.availabilityStart(startDateString);
+        builder.availabilityEnd(endDateString);
+        builder.departureAirports(departureAirports);
+        builder.destinationAirports(destinationAirports);
+        builder.returnToSameAirport(returnToSameAirport);
+        return builder.build();
     }
 
 }
