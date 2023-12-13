@@ -1,7 +1,7 @@
 package com.aerotrack.console.resultconsole;
 
 import com.aerotrack.model.entities.Flight;
-import com.aerotrack.model.entities.FlightPair;
+import com.aerotrack.model.entities.Trip;
 import com.aerotrack.utils.ResourceHelper;
 
 import javax.swing.JFrame;
@@ -20,7 +20,7 @@ public class ScanOutputView extends JFrame {
 
     private final JTextPane textPane;
 
-    public ScanOutputView(List<FlightPair> flightPairs) {
+   public ScanOutputView(List<Trip> tripList) {
         setTitle("Results Console");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -35,31 +35,34 @@ public class ScanOutputView extends JFrame {
 
         addStyledText(ResourceHelper.getString("resultMessage"), null, textPane);
 
-        displayFlightPairs(flightPairs);
+        displayFlightPairs(tripList);
 
         setVisible(true);
     }
 
-    private void displayFlightPairs(List<FlightPair> flightPairs) {
-        if (flightPairs != null && !flightPairs.isEmpty()) {
+    private void displayFlightPairs(List<Trip> tripList) {
+        if (tripList != null && !tripList.isEmpty()) {
             addStyledText("--------------- Results ---------------\n", null, textPane);
 
-            String[] columnNames = {"Outbound Flights", "Return Flights"};
-            Object[][] rowData = new Object[flightPairs.size()][2];
+            String[] columnNames = {"Outbound Flights", "Return Flights", "Prices"};
+            Object[][] rowData = new Object[tripList.size()][3];
 
-            for (int i = 0; i < flightPairs.size(); i++) {
-                FlightPair flightPair = flightPairs.get(i);
-                Flight outboundFlight = flightPair.getOutboundFlight();
-                Flight returnFlight = flightPair.getReturnFlight();
+            for (int i = 0; i < tripList.size(); i++) {
+                Flight outboundFlight = tripList.get(i).getOutboundFlights().get(0);
+                Flight returnFlight = tripList.get(i).getReturnFlights().get(0);
 
                 rowData[i][0] = formatFlightInfo(outboundFlight);
                 rowData[i][1] = formatFlightInfo(returnFlight);
+                rowData[i][2] = tripList.get(i).getTotalPrice().toString();
             }
 
             JTable table = new JTable(rowData, columnNames);
             table.getColumnModel().getColumn(0).setCellRenderer(new MultiLineTableCellRenderer());
             table.getColumnModel().getColumn(1).setCellRenderer(new MultiLineTableCellRenderer());
             table.setRowHeight(100);
+            table.getColumnModel().getColumn(0).setPreferredWidth(185);
+            table.getColumnModel().getColumn(1).setPreferredWidth(185);
+            table.getColumnModel().getColumn(2).setPreferredWidth(30);
             JScrollPane scrollPane = new JScrollPane(table);
             add(scrollPane, BorderLayout.CENTER);
 

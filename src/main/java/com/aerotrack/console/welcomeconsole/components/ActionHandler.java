@@ -4,6 +4,7 @@ import com.aerotrack.model.protocol.ScanQueryRequest;
 import com.aerotrack.utils.clients.apigateway.AerotrackApiClient;
 import com.aerotrack.console.resultconsole.ScanOutputView;
 import com.aerotrack.console.welcomeconsole.ScanInputView;
+import com.aerotrack.model.entities.Trip;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -17,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.aerotrack.model.entities.FlightPair;
+
 import lombok.extern.slf4j.Slf4j;
 
 import static com.aerotrack.utils.Utils.appendErrorText;
@@ -117,21 +118,21 @@ public class ActionHandler {
         }
 
         ScanQueryRequest scanQueryRequest = buildScanQueryRequest(minDurationString, maxDurationString, startDateString, endDateString, departureAirports, flightInfoFields.getReturnToSameAirportCheckBoxValue(), destinationAirports);
-        SwingWorker<List<FlightPair>, Void> worker = new SwingWorker<>() {
+        SwingWorker<List<Trip>, Void> worker = new SwingWorker<>() {
             @Override
-            protected List<FlightPair> doInBackground() {
+            protected List<Trip> doInBackground() {
                 return aerotrackApiClient.getBestFlight(scanQueryRequest);
             }
 
             @Override
             protected void done() {
                 try {
-                    List<FlightPair> flightPairs = get();
+                    List<Trip> tripList = get();
 
-                    if (flightPairs != null) {
+                    if (tripList != null) {
                         // La chiamata è andata a buon fine, puoi gestire la risposta qui
                         // Ad esempio, puoi visualizzare i risultati nella console dei risultati
-                        ScanOutputView scanOutputView = new ScanOutputView(flightPairs);
+                        ScanOutputView scanOutputView = new ScanOutputView(tripList);
                     } else {
                         // La chiamata ha restituito una risposta nulla, gestisci l'errore
                         appendErrorText("Error: Failed to get valid response from API.", textPane);
