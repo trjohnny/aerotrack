@@ -8,17 +8,27 @@ import com.aerotrack.model.entities.Trip;
 
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
+import javax.swing.JOptionPane;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.aerotrack.utils.clients.api.AerotrackApiClient;
 import lombok.extern.slf4j.Slf4j;
+import org.jdesktop.swingx.JXComboBox;
 
 import static com.aerotrack.utils.Utils.appendErrorText;
+import static com.aerotrack.utils.Utils.convertDate;
 
 
 @Slf4j
@@ -34,74 +44,93 @@ public class ActionHandler {
 
 
     public void submitFlightInfo(ScanInputView parent, JTextPane textPane) {
-
-        String startDateString = inputPanel.getStartDatePicker().getText();
-        String endDateString = inputPanel.getEndDatePicker().getText();
+        String startDateString;
+        String endDateString;
+        try {
+            startDateString = convertDate(inputPanel.getStartDatePicker().getText());
+            endDateString = convertDate(inputPanel.getEndDatePicker().getText());
+        } catch (ParseException e){
+            JOptionPane.showMessageDialog(textPane,"Insert the dates in then correct way: dd MMMM yyyy", "Format Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         String minDurationString = inputPanel.getMinDaysField().getText();
         String maxDurationString = inputPanel.getMaxDaysField().getText();
         List<String> departureAirports = new ArrayList<>();
-
-        /*
-        for (JTextField departureField : inputPanel.getDepartureFields()) {
-            String departureAirport = departureField.getText().trim();
-            if (!departureAirport.isEmpty()) {
-                departureAirports.add(departureAirport);
+        for (JXComboBox departureField : inputPanel.getDepartureAirportsComboBoxes()) {
+            String departureAirport = (String) departureField.getSelectedItem();
+            if (departureAirport != null && !departureAirport.trim().isEmpty()) {
+                departureAirports.add(departureAirport.trim());
             }
-        }*/
+        }
 
         List<String> destinationAirports = new ArrayList<>();
-        destinationAirports.add("DUB");
-
+        for (JXComboBox destinationField : inputPanel.getDestinationAirportsComboBoxes()) {
+            String destinationAirport = (String) destinationField.getSelectedItem();
+            if (destinationAirport != null && !destinationAirport.trim().isEmpty()) {
+                destinationAirports.add(destinationAirport.trim());
+            }
+        }
 
         // Controllo che i campi siano pieni
-        if (startDateString.isEmpty() || endDateString.isEmpty() || minDurationString.isEmpty() || maxDurationString.isEmpty() || departureAirports.isEmpty()){
-            appendErrorText("Please fill in all fields.",textPane);
+        if (startDateString.isEmpty() || endDateString.isEmpty() || Objects.isNull(minDurationString) ||
+                minDurationString.isEmpty() || Objects.isNull(maxDurationString) || maxDurationString.isEmpty() ||
+                departureAirports.isEmpty() || destinationAirports.isEmpty()) {
+            JOptionPane.showMessageDialog(textPane,"Please fill in all fields.", "Fields Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        Set<String> duplicateDepartures = findDuplicates(departureAirports);
+        Set<String> duplicateDestinations = findDuplicates(destinationAirports);
 
-        /*
-        //controllo tutti gli aereoporti in input siano diversi
-        Set<String> uniqueDepartures = new HashSet<>();
+        if (!duplicateDepartures.isEmpty() || !duplicateDestinations.isEmpty()) {
+            StringBuilder errorMessageBuilder = new StringBuilder("Error: Duplicate airports detected.\n");
 
-        for (JTextField departureField : flightInfoFields.getDepartureFields()) {
-            String departureAirport = departureField.getText().trim();
-            if (departureAirport.isEmpty()) {
-                continue; // Skip empty fields
+            if (!duplicateDepartures.isEmpty()) {
+                String duplicateDeparturesString = String.join(", ", duplicateDepartures);
+                errorMessageBuilder.append("Duplicate departure airports: ").append(duplicateDeparturesString).append("\n");
             }
 
-            if (!uniqueDepartures.add(departureAirport)) {
-                JOptionPane.showMessageDialog(parent,
-                        "Duplicate departure airport: " + departureAirport,
-                        "Validation Error",
-                        JOptionPane.ERROR_MESSAGE);
+            if (!duplicateDestinations.isEmpty()) {
+                String duplicateDestinationsString = String.join(", ", duplicateDestinations);
+                errorMessageBuilder.append("Duplicate destination airports: ").append(duplicateDestinationsString);
             }
-        }*/
+
+            JOptionPane.showMessageDialog(textPane, errorMessageBuilder.toString(), "Duplicate Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         // Controlli date
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            Date today = new Date();
+            LocalDate currentDate = LocalDate.now();
+            LocalTime midnight = LocalTime.MIDNIGHT;
+            LocalDateTime todayMidnight = LocalDateTime.of(currentDate, midnight);
+
+            Date today = java.sql.Timestamp.valueOf(todayMidnight);
+
+
             Date startDate = dateFormat.parse(startDateString);
+            System.out.println(today +" " + startDate);
             Date endDate = dateFormat.parse(endDateString);
             int minDuration = Integer.parseInt(minDurationString);
             int maxDuration = Integer.parseInt(maxDurationString);
 
             // Controllo che la data di partenza sia maggiore di quella attuale
-            if (startDate.before(today)) {
-                appendErrorText("Error: Start date must be equal or after the today's date.",textPane);
+            if (startDate.before(today) || endDate.before(today)) {
+                appendErrorText("Error: Dates must be equal or after the today's date.",textPane);
+                JOptionPane.showMessageDialog(textPane, "Error: Dates must be equal or after the today's date.", "Date Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             // Controllo che la end date sia successiva alla start date
             if (endDate.before(startDate)) {
-                appendErrorText("Error: End date must be equal or after start date.",textPane);
+                JOptionPane.showMessageDialog(textPane, "Error: End date must be equal or after start date.", "Date Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             // Controllo che min duration sia minore o uguale a max duration
             if (minDuration > maxDuration) {
-                appendErrorText("Error: Min duration must be less than or equal to max duration.",textPane);
+                JOptionPane.showMessageDialog(textPane, "Error: Min duration must be less than or equal to max duration.", "Duration Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -110,7 +139,7 @@ public class ActionHandler {
 
             // Controllo che la differenza tra end date e start date sia maggiore o uguale a max duration
             if (duration < maxDuration) {
-                appendErrorText("Error: End date must be at least " + maxDuration + " days after start date.",textPane);
+                JOptionPane.showMessageDialog(textPane, "Error: End date must be at least " + maxDuration + " days after start date.", "Duration Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -148,8 +177,6 @@ public class ActionHandler {
         };
         // Avvia il lavoro in background
         worker.execute();
-
-
     }
 
     public ScanQueryRequest buildScanQueryRequest(String minDurationString, String maxDurationString,String startDateString, String endDateString, List<String> departureAirports, Boolean returnToSameAirport, List<String> destinationAirports) {
@@ -165,4 +192,10 @@ public class ActionHandler {
         return builder.build();
     }
 
+    public static Set<String> findDuplicates(Collection<String> airports) {
+        Set<String> uniqueAirports = new HashSet<>();
+        return airports.stream()
+                .filter(airport -> !uniqueAirports.add(airport))
+                .collect(Collectors.toSet());
+    }
 }

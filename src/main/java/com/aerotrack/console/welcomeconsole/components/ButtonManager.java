@@ -26,8 +26,8 @@ public class ButtonManager {
 
         JButton removeDepartureAirportButton = new JButton("Remove Departure Airport");
         JButton addDepartureAirportButton = new JButton("Add Departure Airport");
-        JButton removeDestinationAirportButton = new JButton("Remove Destination Airport");
-        JButton addDestinationAirportButton = new JButton("Add Destination Airport");
+        JButton removeDestinationAirportButton = new JButton("Remove Destinations");
+        JButton addDestinationAirportButton = new JButton("Add Destinations");
 
         // Initialize departure airport controls
         setupAirportControls(parent, inputPanel, departurePanel, addDepartureAirportButton, removeDepartureAirportButton, true);
@@ -57,11 +57,12 @@ public class ButtonManager {
                 inputPanel.removeDestinationBox(inputPanel.getInnerDestinationPanel());
                 addButton.setEnabled(true);
             }
+
             int departureCount = inputPanel.getDepartureAirportsComboBoxes().size();
             int destinationCount = inputPanel.getDestinationAirportsComboBoxes().size();
 
             // Abilita/disabilita il pulsante di rimozione in base al conteggio attuale
-            removeButton.setEnabled(isDeparture ? departureCount > 1 : destinationCount > 1);
+            removeButton.setEnabled(isDeparture ? departureCount > 0 : destinationCount > 0);
 
             parent.validate();
             parent.repaint();
@@ -69,19 +70,28 @@ public class ButtonManager {
 
         addButton.addActionListener(e -> {
             if (isDeparture) {
-                inputPanel.addDepartureBox(inputPanel.getInnerDeparturePanel());
+                int departureCount = inputPanel.getDepartureAirportsComboBoxes().size();
+                if (departureCount < 5) {
+                    inputPanel.addDepartureBox(inputPanel.getInnerDeparturePanel());
+                    departureCount++;
+                }
+
+                // Abilita/disabilita il pulsante di rimozione in base al conteggio attuale
+                removeButton.setEnabled(departureCount > 1);
+
+                // Abilita/disabilita il pulsante di aggiunta in base al conteggio attuale
+                addButton.setEnabled(departureCount < 5);
             } else {
                 inputPanel.addDestinationBox(inputPanel.getInnerDestinationPanel());
+
+                int destinationCount = inputPanel.getDestinationAirportsComboBoxes().size();
+
+                // Abilita/disabilita il pulsante di rimozione in base al conteggio attuale
+                removeButton.setEnabled(destinationCount > 0);
+
+                // Abilita/disabilita il pulsante di aggiunta in base al conteggio attuale
+                addButton.setEnabled(destinationCount < Integer.MAX_VALUE);
             }
-
-            int departureCount = inputPanel.getDepartureAirportsComboBoxes().size();
-            int destinationCount = inputPanel.getDestinationAirportsComboBoxes().size();
-
-            // Abilita/disabilita il pulsante di rimozione in base al conteggio attuale
-            removeButton.setEnabled(isDeparture ? departureCount > 1 : destinationCount > 1);
-
-            // Abilita/disabilita il pulsante di aggiunta in base al conteggio attuale
-            addButton.setEnabled(isDeparture ? departureCount < 5 : destinationCount < 5);
 
             parent.validate();
             parent.repaint();
@@ -90,6 +100,7 @@ public class ButtonManager {
         airportControlsPanel.add(addButton);
         airportControlsPanel.add(removeButton);
     }
+
 
     public JPanel getPanel() {
         return panel;

@@ -7,6 +7,9 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.Color;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Utils {
 
@@ -19,11 +22,17 @@ public class Utils {
         }
     }
         public static void appendErrorText(String text, JTextPane textPane) {
-            // Imposta il colore del testo a rosso
-            SimpleAttributeSet attributes = new SimpleAttributeSet();
-            StyleConstants.setForeground(attributes, Color.RED);
+        SimpleAttributeSet attributes = new SimpleAttributeSet();
+        StyleConstants.setForeground(attributes, Color.RED);
 
-            // Aggiunge il testo al JTextPane con gli attributi specificati
-            addStyledText(text + "\n", attributes, textPane);
+        addStyledText(text + "\n", attributes, textPane);
         }
+
+    public static String convertDate(String inputDate) throws  ParseException{
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd MMMM yyyy");
+        Date date = inputFormat.parse(inputDate);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        return outputFormat.format(date);
+    }
 }

@@ -7,14 +7,8 @@ import org.jdesktop.swingx.JXComboBox;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JCheckBox;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -36,59 +30,98 @@ public class InputPanel {
     private final JPanel innerDeparturePanel;
     private final JPanel innerDestinationPanel;
 
-
+    private final JScrollPane departureScrollPane;
+    private final JScrollPane destinationScrollPane;
 
 
     public InputPanel(ScanInputView parent) {
         this.parent = parent;
+        panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         startDatePicker = new DatePicker();
         endDatePicker = new DatePicker();
-        minDaysField = new JTextField(10);
-        minDaysField.setText("1");
-        maxDaysField = new JTextField(10);
-        maxDaysField.setText("15");
+        minDaysField = new JTextField("1", 10);
+        maxDaysField = new JTextField("15", 10);
         returnToSameAirportCheckBox = new JCheckBox("Return to the same airport", false);
         departureAirportsComboBoxes = new ArrayList<>();
         destinationAirportsComboBoxes = new ArrayList<>();
 
-        panel = new JPanel(new GridLayout(0, 2, 5, 5));
 
-        innerDeparturePanel = new JPanel(new GridLayout(0, 1));
-        innerDestinationPanel = new JPanel(new GridLayout(0, 1));
-        innerDeparturePanel.setLayout(new BoxLayout(innerDeparturePanel, BoxLayout.Y_AXIS));
-        innerDestinationPanel.setLayout(new BoxLayout(innerDestinationPanel, BoxLayout.Y_AXIS));
 
+        // Set fixed size for the input fields
+        Dimension inputSize = new Dimension(450, 20);
+        Dimension labelSize = new Dimension(450, 20);
+        startDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
+        endDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
+        minDaysField.setMaximumSize(inputSize);
+        maxDaysField.setMaximumSize(inputSize);
+
+        // Create the date panel
+        JPanel datePanel = new JPanel(new GridLayout(2, 2, 5, 5));
+
+        // Prima colonna
         JLabel startDateLabel = new JLabel("Start Date (yyyy-MM-dd):");
+        startDateLabel.setPreferredSize(labelSize);
+        datePanel.add(startDateLabel);
+        datePanel.add(startDatePicker);
         JLabel endDateLabel = new JLabel("End Date (yyyy-MM-dd):");
-        JLabel minDaysDurationLabel = new JLabel("Min duration of the trip (days):");
-        JLabel maxDaysDurationLabel = new JLabel("Max duration of the trip  (days):");
-        JLabel departureAirportsLabel = new JLabel("Departure Airports:");
-        JLabel destinationAirportsLabel = new JLabel("Destination Airports:");
+        endDateLabel.setPreferredSize(labelSize);
+        datePanel.add(endDateLabel);
+        datePanel.add(endDatePicker);
 
-        panel.add(startDateLabel);
-        panel.add(endDateLabel);
-        panel.add(startDatePicker);
-        panel.add(endDatePicker);
-        panel.add(minDaysDurationLabel);
-        panel.add(maxDaysDurationLabel);
-        panel.add(minDaysField);
-        panel.add(maxDaysField);
+        // Seconda colonna: Min duration e Max duration
+        JLabel minDurationLabel = new JLabel("Min duration of the trip (days):");
+        minDurationLabel.setPreferredSize(labelSize);
+        datePanel.add(minDurationLabel);
+        datePanel.add(minDaysField);
+        JLabel maxDurationLabel = new JLabel("Max duration of the trip (days):");
+        maxDurationLabel.setPreferredSize(labelSize);
+        datePanel.add(maxDurationLabel);
+        datePanel.add(maxDaysField);
 
-        panel.add(returnToSameAirportCheckBox);
+        // Aggiungi il datePanel al pannello principale
+        datePanel.setMaximumSize(datePanel.getPreferredSize());
+        panel.add(datePanel);
 
-        JPanel innerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        innerPanel.add(departureAirportsLabel);
-        innerPanel.add(destinationAirportsLabel);
-        panel.add(innerPanel);
+        // Aggiungi il checkBox allineato a sinistra
+        JPanel checkBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        checkBoxPanel.add(returnToSameAirportCheckBox);
+        panel.add(checkBoxPanel);
 
-        panel.add(departureAirportsLabel);
-        panel.add(destinationAirportsLabel);
 
-        addDepartureBox(innerDeparturePanel);
-        addDestinationBox(innerDestinationPanel);
-        panel.add(innerDeparturePanel);
-        panel.add(innerDestinationPanel);
 
+        innerDeparturePanel = new JPanel();
+        innerDeparturePanel.setLayout(new BoxLayout(innerDeparturePanel, BoxLayout.Y_AXIS));
+        innerDestinationPanel = new JPanel();
+        innerDestinationPanel.setLayout(new BoxLayout(innerDestinationPanel, BoxLayout.Y_AXIS));
+        innerDeparturePanel.setAlignmentY(Component.TOP_ALIGNMENT);
+        innerDestinationPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+
+        // Initialize and add scroll panes for the inner panels
+        departureScrollPane = new JScrollPane(innerDeparturePanel);
+        departureScrollPane.setPreferredSize(new Dimension(450, 1000));
+        departureScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        departureScrollPane.setAlignmentY(Component.TOP_ALIGNMENT);
+
+        destinationScrollPane = new JScrollPane(innerDestinationPanel);
+        destinationScrollPane.setPreferredSize(new Dimension(450, 1000));
+        destinationScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        destinationScrollPane.setAlignmentY(Component.TOP_ALIGNMENT);
+
+        // Create a container panel for scroll panes to put them in the same line
+        JPanel scrollPaneContainer = new JPanel();
+        scrollPaneContainer.setLayout(new BoxLayout(scrollPaneContainer, BoxLayout.LINE_AXIS));
+        scrollPaneContainer.add(departureScrollPane);
+        scrollPaneContainer.add(destinationScrollPane);
+        panel.add(scrollPaneContainer);
+
+        // Optionally, add borders around the scroll panes for visual separation
+        departureScrollPane.setBorder(BorderFactory.createTitledBorder("Departure Airports"));
+        destinationScrollPane.setBorder(BorderFactory.createTitledBorder("Destinations"));
+
+        // Remember to revalidate and repaint the panel when adding or removing components
+        panel.revalidate();
+        panel.repaint();
     }
 
 
@@ -96,16 +129,24 @@ public class InputPanel {
         JXComboBox departureAirportsComboBox = new JXComboBox(new Vector<>(List.of("VCE","DUB","TSF","TRS","STN")));
         AutoCompleteDecorator.decorate(departureAirportsComboBox, ObjectToStringConverter.DEFAULT_IMPLEMENTATION);
         departureAirportsComboBoxes.add(departureAirportsComboBox);
+        departureAirportsComboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, departureAirportsComboBox.getPreferredSize().height));
+        departureAirportsComboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         innerDeparturePanel.add(departureAirportsComboBox);
-        resizeComboBoxesPanels();
+
+        innerDeparturePanel.revalidate();
+        innerDeparturePanel.repaint();
     }
 
     public void addDestinationBox(JPanel innerDestinationPanel){
         JXComboBox destinationAirportsComboBox = new JXComboBox(new Vector<>(List.of("VCE","DUB","TSF","TRS","STN")));
         AutoCompleteDecorator.decorate(destinationAirportsComboBox, ObjectToStringConverter.DEFAULT_IMPLEMENTATION);
         destinationAirportsComboBoxes.add(destinationAirportsComboBox);
+        destinationAirportsComboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, destinationAirportsComboBox.getPreferredSize().height));
+        destinationAirportsComboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         innerDestinationPanel.add(destinationAirportsComboBox);
-        resizeComboBoxesPanels();
+
+        innerDestinationPanel.revalidate();
+        innerDestinationPanel.repaint();
     }
 
     public void removeDepartureBox(JPanel innerDeparturePanel){
@@ -131,19 +172,16 @@ public class InputPanel {
     }
 
     public void resizeComboBoxesPanels() {
+        // Calculate new height based on the number of elements but do not change the width
         int maxSize = Math.max(departureAirportsComboBoxes.size(), destinationAirportsComboBoxes.size());
-        int newHeight = maxSize * 40;
+        int newHeight = maxSize * 40; // Assuming each combo box takes 40 pixels in height
 
-        // Calcola la nuova altezza basandoti sulla dimensione attuale e il numero di elementi
-        int departurePanelHeight = innerDeparturePanel.getPreferredSize().height;
-        int destinationPanelHeight = innerDestinationPanel.getPreferredSize().height;
+        // Set the preferred size of the inner panels to be dynamic only in height
+        innerDeparturePanel.setPreferredSize(new Dimension(innerDeparturePanel.getPreferredSize().width, newHeight));
+        innerDestinationPanel.setPreferredSize(new Dimension(innerDestinationPanel.getPreferredSize().width, newHeight));
 
-        // Imposta la dimensione minima dei pannelli interni
-        innerDeparturePanel.setMinimumSize(new Dimension(innerDeparturePanel.getWidth(), departurePanelHeight + newHeight));
-        innerDestinationPanel.setMinimumSize(new Dimension(innerDestinationPanel.getWidth(), destinationPanelHeight + newHeight));
-
-        //Ridimensiona anche il pannello più grande
-        parent.getScanInputViewTextPane().setSize(900,parent.getScanInputViewTextPane().getHeight()+newHeight);
+        // Adjust the parent container to accommodate the new height
+        parent.getScanInputViewTextPane().setSize(parent.getScanInputViewTextPane().getWidth(), parent.getScanInputViewTextPane().getHeight() + newHeight);
 
         panel.revalidate();
         panel.repaint();
