@@ -1,24 +1,21 @@
 package com.aerotrack.console.welcomeconsole.components;
 
+import com.aerotrack.model.entities.AerotrackStage;
 import com.aerotrack.model.protocol.ScanQueryRequest;
-import com.aerotrack.utils.clients.apigateway.AerotrackApiClient;
 import com.aerotrack.console.resultconsole.ScanOutputView;
 import com.aerotrack.console.welcomeconsole.ScanInputView;
 import com.aerotrack.model.entities.Trip;
 
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
+import com.aerotrack.utils.clients.api.AerotrackApiClient;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.aerotrack.utils.Utils.appendErrorText;
@@ -26,32 +23,35 @@ import static com.aerotrack.utils.Utils.appendErrorText;
 
 @Slf4j
 public class ActionHandler {
-
-    private final FlightInfoFields flightInfoFields;
+    private final InputPanel inputPanel;
     private final AerotrackApiClient aerotrackApiClient;
 
 
-    public ActionHandler(FlightInfoFields flightInfoFields){
-        this.flightInfoFields = flightInfoFields;
-        this.aerotrackApiClient = AerotrackApiClient.create();
+    public ActionHandler(InputPanel inputPanel){
+        this.inputPanel = inputPanel;
+        this.aerotrackApiClient = AerotrackApiClient.create(AerotrackStage.ALPHA);
     }
 
 
     public void submitFlightInfo(ScanInputView parent, JTextPane textPane) {
 
-        String startDateString = flightInfoFields.getStartDateField().getText();
-        String endDateString = flightInfoFields.getEndDateField().getText();
-        String minDurationString = flightInfoFields.getMinDaysField().getText();
-        String maxDurationString = flightInfoFields.getMaxDaysField().getText();
+        String startDateString = inputPanel.getStartDatePicker().getText();
+        String endDateString = inputPanel.getEndDatePicker().getText();
+        String minDurationString = inputPanel.getMinDaysField().getText();
+        String maxDurationString = inputPanel.getMaxDaysField().getText();
         List<String> departureAirports = new ArrayList<>();
-        for (JTextField departureField : flightInfoFields.getDepartureFields()) {
+
+        /*
+        for (JTextField departureField : inputPanel.getDepartureFields()) {
             String departureAirport = departureField.getText().trim();
             if (!departureAirport.isEmpty()) {
                 departureAirports.add(departureAirport);
             }
-        }
+        }*/
+
         List<String> destinationAirports = new ArrayList<>();
         destinationAirports.add("DUB");
+
 
         // Controllo che i campi siano pieni
         if (startDateString.isEmpty() || endDateString.isEmpty() || minDurationString.isEmpty() || maxDurationString.isEmpty() || departureAirports.isEmpty()){
@@ -59,6 +59,8 @@ public class ActionHandler {
             return;
         }
 
+
+        /*
         //controllo tutti gli aereoporti in input siano diversi
         Set<String> uniqueDepartures = new HashSet<>();
 
@@ -74,7 +76,7 @@ public class ActionHandler {
                         "Validation Error",
                         JOptionPane.ERROR_MESSAGE);
             }
-        }
+        }*/
 
         // Controlli date
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -117,7 +119,7 @@ public class ActionHandler {
             return;
         }
 
-        ScanQueryRequest scanQueryRequest = buildScanQueryRequest(minDurationString, maxDurationString, startDateString, endDateString, departureAirports, flightInfoFields.getReturnToSameAirportCheckBoxValue(), destinationAirports);
+        ScanQueryRequest scanQueryRequest = buildScanQueryRequest(minDurationString, maxDurationString, startDateString, endDateString, departureAirports, inputPanel.getReturnToSameAirportCheckBox().isSelected(), destinationAirports);
         SwingWorker<List<Trip>, Void> worker = new SwingWorker<>() {
             @Override
             protected List<Trip> doInBackground() {

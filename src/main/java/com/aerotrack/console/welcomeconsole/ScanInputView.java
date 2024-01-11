@@ -7,26 +7,25 @@ import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 
 import com.aerotrack.console.welcomeconsole.components.ButtonManager;
-import com.aerotrack.console.welcomeconsole.components.FlightInfoFields;
 import com.aerotrack.console.welcomeconsole.components.InputPanel;
 import com.aerotrack.utils.ResourceHelper;
 
 import static com.aerotrack.utils.Utils.addStyledText;
 
 
-
 public class ScanInputView extends JFrame {
-    private final FlightInfoFields flightInfoFields;
-    private final int baseHeight = 340;
+
+    private final JTextPane textPane;
+    public int baseHeight = 420;
 
     public ScanInputView() {
         setTitle(ResourceHelper.getString("title"));
-        setSize(500, baseHeight);
+        setSize(900, baseHeight);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JTextPane textPane = new JTextPane();
+        textPane = new JTextPane();
         textPane.setEditable(false);
 
         addStyledText(ResourceHelper.getString("welcomeMessage"), null, textPane);
@@ -34,18 +33,16 @@ public class ScanInputView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(textPane);
         add(scrollPane, BorderLayout.NORTH);
 
-        flightInfoFields = new FlightInfoFields();
-        InputPanel inputPanel = new InputPanel(this, flightInfoFields);
+        InputPanel inputPanel = new InputPanel(this);
         add(inputPanel.getPanel(), BorderLayout.CENTER);
 
-        ButtonManager buttonManager = new ButtonManager(this, inputPanel, flightInfoFields, textPane);
+        ButtonManager buttonManager = new ButtonManager(this, inputPanel, textPane);
         add(buttonManager.getPanel(), BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
-    public void resizeWindow() {
-        int newHeight = baseHeight + flightInfoFields.getDepartureFields().size() * 30;
-        setSize(getWidth(), newHeight);
+    public JTextPane getScanInputViewTextPane(){
+        return this.textPane;
     }
 }

@@ -1,6 +1,6 @@
 package com.aerotrack.utils;
 
-    import java.util.ResourceBundle;
+import java.util.ResourceBundle;
 
 public class ResourceHelper {
     private static final String BUNDLE_NAME = "ui_strings";
