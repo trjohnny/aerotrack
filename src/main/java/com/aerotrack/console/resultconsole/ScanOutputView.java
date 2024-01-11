@@ -22,7 +22,7 @@ public class ScanOutputView extends JFrame {
 
    public ScanOutputView(List<Trip> tripList) {
         setTitle("Results Console");
-        setSize(600, 400);
+        setSize(900, 420);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

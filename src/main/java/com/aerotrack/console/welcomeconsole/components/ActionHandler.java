@@ -1,10 +1,11 @@
 package com.aerotrack.console.welcomeconsole.components;
 
+import com.aerotrack.console.resultconsole.DestinationsButtonsView;
 import com.aerotrack.model.entities.AerotrackStage;
 import com.aerotrack.model.protocol.ScanQueryRequest;
-import com.aerotrack.console.resultconsole.ScanOutputView;
 import com.aerotrack.console.welcomeconsole.ScanInputView;
 import com.aerotrack.model.entities.Trip;
+
 
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
@@ -18,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +38,8 @@ import static com.aerotrack.utils.Utils.convertDate;
 public class ActionHandler {
     private final InputPanel inputPanel;
     private final AerotrackApiClient aerotrackApiClient;
+    private final Map<String, List<Trip>> destinationResults = new LinkedHashMap<>();
+
 
 
     public ActionHandler(InputPanel inputPanel){
@@ -110,7 +115,6 @@ public class ActionHandler {
 
 
             Date startDate = dateFormat.parse(startDateString);
-            System.out.println(today +" " + startDate);
             Date endDate = dateFormat.parse(endDateString);
             int minDuration = Integer.parseInt(minDurationString);
             int maxDuration = Integer.parseInt(maxDurationString);
@@ -161,9 +165,16 @@ public class ActionHandler {
                     List<Trip> tripList = get();
 
                     if (tripList != null) {
+                        // Organizza i risultati per destinazione
+                        organizeResultsByDestination(tripList);
+
+                        // Crea una nuova finestra con i bottoni delle destinazioni
+                        DestinationsButtonsView buttonsView = new DestinationsButtonsView(destinationResults);
+                        buttonsView.setVisible(true);
+
                         // La chiamata è andata a buon fine, puoi gestire la risposta qui
                         // Ad esempio, puoi visualizzare i risultati nella console dei risultati
-                        ScanOutputView scanOutputView = new ScanOutputView(tripList);
+                        //ScanOutputView scanOutputView = new ScanOutputView(tripList);
                     } else {
                         // La chiamata ha restituito una risposta nulla, gestisci l'errore
                         appendErrorText("Error: Failed to get valid response from API.", textPane);
@@ -198,4 +209,15 @@ public class ActionHandler {
                 .filter(airport -> !uniqueAirports.add(airport))
                 .collect(Collectors.toSet());
     }
+
+    private void organizeResultsByDestination(List<Trip> tripList) {
+        // Organizza i risultati per destinazione
+        destinationResults.clear();
+        for (Trip trip : tripList) {
+            String direction = trip.getOutboundFlights().get(0).getDirection();
+            destinationResults.computeIfAbsent(direction.split("-")[1], k -> new ArrayList<>());
+            destinationResults.get(direction.split("-")[1]).add(trip);
+        }
+    }
+
 }

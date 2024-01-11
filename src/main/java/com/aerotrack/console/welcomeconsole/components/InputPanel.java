@@ -10,8 +10,11 @@ import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
+
 import lombok.Getter;
 
 
@@ -32,6 +35,20 @@ public class InputPanel {
 
     private final JScrollPane departureScrollPane;
     private final JScrollPane destinationScrollPane;
+    private enum AirportCode {
+        LHR, CDG, FRA, AMS, MAD, BCN, FCO, MUC, LGW, IST,
+        CPH, SVO, DME, ORY, ARN, ZRH, VIE, MAN, ATH, LIS,
+        OSL, HEL, DUB, BRU, TXL, MXP, GVA, PRG, WAW, DUS,
+        BUD, OTP, MLA, STR, TSF, TRS, HAM, VCE, EIN, STN,
+        VLC, NCE, BLQ, NAP, BHX, GLA, LBA, EDI, BRS, SEN;
+
+
+        public static List<String> toList(){
+            return Arrays.stream(AirportCode.values())
+                    .map(Enum::toString)
+                    .collect(Collectors.toList());
+        }
+    }
 
 
     public InputPanel(ScanInputView parent) {
@@ -126,7 +143,7 @@ public class InputPanel {
 
 
     public void addDepartureBox(JPanel innerDeparturePanel){
-        JXComboBox departureAirportsComboBox = new JXComboBox(new Vector<>(List.of("VCE","DUB","TSF","TRS","STN")));
+        JXComboBox departureAirportsComboBox = new JXComboBox(new Vector<>(AirportCode.toList()));
         AutoCompleteDecorator.decorate(departureAirportsComboBox, ObjectToStringConverter.DEFAULT_IMPLEMENTATION);
         departureAirportsComboBoxes.add(departureAirportsComboBox);
         departureAirportsComboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, departureAirportsComboBox.getPreferredSize().height));
@@ -138,7 +155,7 @@ public class InputPanel {
     }
 
     public void addDestinationBox(JPanel innerDestinationPanel){
-        JXComboBox destinationAirportsComboBox = new JXComboBox(new Vector<>(List.of("VCE","DUB","TSF","TRS","STN")));
+        JXComboBox destinationAirportsComboBox = new JXComboBox(new Vector<>(AirportCode.toList()));
         AutoCompleteDecorator.decorate(destinationAirportsComboBox, ObjectToStringConverter.DEFAULT_IMPLEMENTATION);
         destinationAirportsComboBoxes.add(destinationAirportsComboBox);
         destinationAirportsComboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, destinationAirportsComboBox.getPreferredSize().height));
@@ -169,25 +186,6 @@ public class InputPanel {
             panel.revalidate();
             panel.repaint();
         }
-    }
-
-    public void resizeComboBoxesPanels() {
-        // Calculate new height based on the number of elements but do not change the width
-        int maxSize = Math.max(departureAirportsComboBoxes.size(), destinationAirportsComboBoxes.size());
-        int newHeight = maxSize * 40; // Assuming each combo box takes 40 pixels in height
-
-        // Set the preferred size of the inner panels to be dynamic only in height
-        innerDeparturePanel.setPreferredSize(new Dimension(innerDeparturePanel.getPreferredSize().width, newHeight));
-        innerDestinationPanel.setPreferredSize(new Dimension(innerDestinationPanel.getPreferredSize().width, newHeight));
-
-        // Adjust the parent container to accommodate the new height
-        parent.getScanInputViewTextPane().setSize(parent.getScanInputViewTextPane().getWidth(), parent.getScanInputViewTextPane().getHeight() + newHeight);
-
-        panel.revalidate();
-        panel.repaint();
-
-        parent.revalidate();
-        parent.repaint();
     }
 
 }
