@@ -19,13 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import static com.aerotrack.utils.Utils.addStyledText;
 
 @Slf4j
-public class ScanInputView extends JFrame {
+public class AerotrackApp extends JFrame {
 
     public int baseHeight = 420;
     @Getter
     private final AerotrackApiClient aerotrackApiClient = AerotrackApiClient.create(AerotrackStage.ALPHA);
 
-    public ScanInputView()  {
+    public AerotrackApp()  {
         try {
             this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getResource("/logo.png"))));
         } catch (IOException e) {
@@ -52,5 +52,9 @@ public class ScanInputView extends JFrame {
         add(buttonManager.getPanel(), BorderLayout.SOUTH);
 
         setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new AerotrackApp();
     }
 }

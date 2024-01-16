@@ -1,6 +1,6 @@
 package com.aerotrack.console.resultconsole;
 
-import com.aerotrack.console.welcomeconsole.ScanInputView;
+import com.aerotrack.console.welcomeconsole.AerotrackApp;
 import com.aerotrack.model.entities.Trip;
 
 import javax.swing.JButton;
@@ -19,10 +19,10 @@ import java.util.Map;
 
 public class DestinationsButtonsView extends JFrame{
 
-    private final ScanInputView parent;
+    private final AerotrackApp parent;
     private final Map<String, List<Trip>> destinationResults;
 
-    public DestinationsButtonsView(ScanInputView parent, Map<String, List<Trip>> destinationResults) {
+    public DestinationsButtonsView(AerotrackApp parent, Map<String, List<Trip>> destinationResults) {
         this.parent = parent;
         this.destinationResults = destinationResults;
         initComponents();

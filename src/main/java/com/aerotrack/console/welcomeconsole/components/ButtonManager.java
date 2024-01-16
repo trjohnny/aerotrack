@@ -1,6 +1,6 @@
 package com.aerotrack.console.welcomeconsole.components;
 
-import com.aerotrack.console.welcomeconsole.ScanInputView;
+import com.aerotrack.console.welcomeconsole.AerotrackApp;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -16,7 +16,7 @@ public class ButtonManager {
     private final ActionHandler actionHandler;
 
 
-    public ButtonManager(ScanInputView parent, InputPanel inputPanel) {
+    public ButtonManager(AerotrackApp parent, InputPanel inputPanel) {
         actionHandler = new ActionHandler(inputPanel, parent);
         JLabel loadingLabel = new JLabel(new ImageIcon(Objects.requireNonNull(getClass().getResource("/loading-buffering.gif"))));
 
@@ -47,7 +47,7 @@ public class ButtonManager {
         panel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void setupAirportControls(ScanInputView parent, InputPanel inputPanel, JPanel airportControlsPanel, JButton addButton, JButton removeButton, boolean isDeparture) {
+    private void setupAirportControls(AerotrackApp parent, InputPanel inputPanel, JPanel airportControlsPanel, JButton addButton, JButton removeButton, boolean isDeparture) {
         removeButton.setEnabled(false);
         removeButton.addActionListener(e -> {
             if (isDeparture) {

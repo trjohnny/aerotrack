@@ -3,7 +3,7 @@ package com.aerotrack.console.welcomeconsole.components;
 import com.aerotrack.console.resultconsole.DestinationsButtonsView;
 import com.aerotrack.model.entities.Airport;
 import com.aerotrack.model.protocol.ScanQueryRequest;
-import com.aerotrack.console.welcomeconsole.ScanInputView;
+import com.aerotrack.console.welcomeconsole.AerotrackApp;
 import com.aerotrack.model.entities.Trip;
 
 import java.text.ParseException;
@@ -30,19 +30,19 @@ import static com.aerotrack.utils.Utils.convertDate;
 
 @Slf4j
 public class ActionHandler {
-    private final ScanInputView parent;
+    private final AerotrackApp parent;
     private final InputPanel inputPanel;
 
     private final Map<String, List<Trip>> destinationResults = new LinkedHashMap<>();
 
 
-    public ActionHandler(InputPanel inputPanel, ScanInputView parent){
+    public ActionHandler(InputPanel inputPanel, AerotrackApp parent){
         this.inputPanel = inputPanel;
         this.parent = parent;
     }
 
 
-    public void submitFlightInfo(ScanInputView parent, JPanel buttonPanel) {
+    public void submitFlightInfo(AerotrackApp parent, JPanel buttonPanel) {
         String startDateString;
         String endDateString;
         try {

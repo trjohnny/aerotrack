@@ -7,7 +7,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class ScanInputViewTest
+public class AerotrackAppTest
     extends TestCase
 {
     /**
@@ -15,7 +15,7 @@ public class ScanInputViewTest
      *
      * @param testName name of the test case
      */
-    public ScanInputViewTest(String testName )
+    public AerotrackAppTest(String testName )
     {
         super( testName );
     }
@@ -25,7 +25,7 @@ public class ScanInputViewTest
      */
     public static Test suite()
     {
-        return new TestSuite( ScanInputViewTest.class );
+        return new TestSuite( AerotrackAppTest.class );
     }
 
     /**

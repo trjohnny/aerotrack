@@ -1,6 +1,6 @@
 package com.aerotrack.console.welcomeconsole.components;
 
-import com.aerotrack.console.welcomeconsole.ScanInputView;
+import com.aerotrack.console.welcomeconsole.AerotrackApp;
 import com.aerotrack.model.entities.AirportsJsonFile;
 import com.github.lgooddatepicker.components.DatePicker;
 import org.jdesktop.swingx.JXComboBox;
@@ -32,7 +32,7 @@ import static com.aerotrack.utils.Utils.countryNameToCodeMap;
 @Getter
 public class InputPanel {
     private final JPanel panel;
-    private final ScanInputView parent;
+    private final AerotrackApp parent;
     private final DatePicker startDatePicker;
     private final DatePicker endDatePicker;
     private final JTextField minDaysField;
@@ -48,7 +48,7 @@ public class InputPanel {
     public final AirportsJsonFile airportsJsonFile;
 
 
-    public InputPanel(ScanInputView parent) {
+    public InputPanel(AerotrackApp parent) {
         this.parent = parent;
         airportsJsonFile = parent.getAerotrackApiClient().getAirportsJson();
 
