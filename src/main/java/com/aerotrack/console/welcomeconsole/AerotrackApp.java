@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.Objects;
@@ -25,7 +26,7 @@ public class AerotrackApp extends JFrame {
     @Getter
     private final AerotrackApiClient aerotrackApiClient = AerotrackApiClient.create(AerotrackStage.ALPHA);
 
-    public AerotrackApp()  {
+    private AerotrackApp()  {
         try {
             this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getResource("/logo.png"))));
         } catch (IOException e) {
@@ -55,6 +56,6 @@ public class AerotrackApp extends JFrame {
     }
 
     public static void main(String[] args) {
-        new AerotrackApp();
+        SwingUtilities.invokeLater(AerotrackApp::new);
     }
 }

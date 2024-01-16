@@ -87,9 +87,5 @@ public class ButtonManager {
         airportControlsPanel.add(addButton);
         airportControlsPanel.add(removeButton);
     }
-
-    public JPanel getPanel() {
-        return panel;
-    }
 }
 

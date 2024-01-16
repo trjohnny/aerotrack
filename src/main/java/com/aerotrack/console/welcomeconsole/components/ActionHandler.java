@@ -55,7 +55,7 @@ public class ActionHandler {
         String minDurationString = inputPanel.getMinDaysField().getText();
         String maxDurationString = inputPanel.getMaxDaysField().getText();
 
-        List<String> departureAirports = new ArrayList<>();
+        Set<String> departureAirportsSet = new HashSet<>();
         for (JXComboBox departureField : inputPanel.getDepartureAirportsComboBoxes()) {
             String departureAirport = (String) departureField.getSelectedItem();
             if (departureAirport != null && !departureAirport.trim().isEmpty()) {
@@ -63,28 +63,28 @@ public class ActionHandler {
                     int startIdx = departureAirport.indexOf("[") + 1;
                     int endIdx = departureAirport.indexOf("]");
                     String airportCode = departureAirport.substring(startIdx, endIdx);
-                    departureAirports.add(airportCode);
+                    departureAirportsSet.add(airportCode);
                 }
             }
         }
+        List<String> departureAirports = new ArrayList<>(departureAirportsSet);
 
-        Set<String> destinations = new HashSet<>();
+        Set<String> destinationCountries = new HashSet<>();
         Set<String> destinationAirportsCodes = new HashSet<>();
         for (JXComboBox destinationField : inputPanel.getDestinationAirportsComboBoxes()) {
-            String destinationAirport = (String) destinationField.getSelectedItem();
-            if (destinationAirport != null && !destinationAirport.trim().isEmpty()) {
-                if(countryNameToCodeMap.containsKey(destinationAirport)){
-                    destinations.add(countryNameToCodeMap.get(destinationAirport));
-                }
-                if (destinationAirport.contains("[") && destinationAirport.contains("]")) {
-                    int startIdx = destinationAirport.indexOf("[") + 1;
-                    int endIdx = destinationAirport.indexOf("]");
-                    String airportCode = destinationAirport.substring(startIdx, endIdx);
+            String destination = (String) destinationField.getSelectedItem();
+            if (destination != null && !destination.trim().isEmpty()) {
+                if(countryNameToCodeMap.containsKey(destination)){
+                    destinationCountries.add(countryNameToCodeMap.get(destination));
+                } else {
+                    int startIdx = destination.indexOf("[") + 1;
+                    int endIdx = destination.indexOf("]");
+                    String airportCode = destination.substring(startIdx, endIdx);
                     destinationAirportsCodes.add(airportCode);
                 }
             }
         }
-        for (String countryCode : destinations){
+        for (String countryCode : destinationCountries){
             for (Airport airport : inputPanel.airportsJsonFile.getAirports()){
                 if(countryCode.equals(airport.getCountryCode())){
                     destinationAirportsCodes.add(airport.getAirportCode());
@@ -95,31 +95,10 @@ public class ActionHandler {
 
         if (startDateString.isEmpty() || endDateString.isEmpty() || Objects.isNull(minDurationString) ||
                 minDurationString.isEmpty() || Objects.isNull(maxDurationString) || maxDurationString.isEmpty() ||
-                departureAirports.isEmpty() || destinationAirports.isEmpty()) {
+                departureAirportsSet.isEmpty() || destinationAirports.isEmpty()) {
             JOptionPane.showMessageDialog(parent,"Please fill in all fields.", "Fields Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        Set<String> duplicateDepartures = findDuplicates(departureAirports);
-        Set<String> duplicateDestinations = findDuplicates(destinationAirports);
-
-        if (!duplicateDepartures.isEmpty() || !duplicateDestinations.isEmpty()) {
-            StringBuilder errorMessageBuilder = new StringBuilder("Error: Duplicate airports detected.\n");
-
-            if (!duplicateDepartures.isEmpty()) {
-                String duplicateDeparturesString = String.join(", ", duplicateDepartures);
-                errorMessageBuilder.append("Duplicate departure airports: ").append(duplicateDeparturesString).append("\n");
-            }
-
-            if (!duplicateDestinations.isEmpty()) {
-                String duplicateDestinationsString = String.join(", ", duplicateDestinations);
-                errorMessageBuilder.append("Duplicate destination airports: ").append(duplicateDestinationsString);
-            }
-
-            JOptionPane.showMessageDialog(parent, errorMessageBuilder.toString(), "Duplicate Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
 
         ScanQueryRequest scanQueryRequest = buildScanQueryRequest(minDurationString, maxDurationString, startDateString, endDateString, departureAirports, inputPanel.getReturnToSameAirportCheckBox().isSelected(), destinationAirports);
         if (scanQueryRequest == null){
@@ -173,13 +152,6 @@ public class ActionHandler {
             JOptionPane.showMessageDialog(parent, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
             return null;
         }
-    }
-
-    public static Set<String> findDuplicates(Collection<String> airports) {
-        Set<String> uniqueAirports = new HashSet<>();
-        return airports.stream()
-                .filter(airport -> !uniqueAirports.add(airport))
-                .collect(Collectors.toSet());
     }
 
     private void organizeResultsByDestination(List<Trip> tripList) {
