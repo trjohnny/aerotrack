@@ -5,14 +5,10 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.BorderLayout;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import com.aerotrack.console.welcomeconsole.components.ButtonManager;
 import com.aerotrack.console.welcomeconsole.components.InputPanel;
-import com.aerotrack.console.welcomeconsole.components.LoadingOverlayPanel;
 import com.aerotrack.model.entities.AerotrackStage;
 import com.aerotrack.utils.ResourceHelper;
 import com.aerotrack.utils.clients.api.AerotrackApiClient;
