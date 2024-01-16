@@ -35,7 +35,7 @@ public class DestinationResultView extends JFrame {
     public DestinationResultView(List<Trip> destinationTrips) {
         this.destinationTrips = destinationTrips;
         setTitle("Destination Results Console");
-        setSize(900, 600); // Adjust the size as needed
+        setSize(900, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -68,7 +68,7 @@ public class DestinationResultView extends JFrame {
         for (Trip trip : tripsForPage) {
             JPanel tripPanel = createTripPanel(trip, counter++);
             contentPanel.add(tripPanel);
-            contentPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between panels
+            contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         }
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -77,7 +77,6 @@ public class DestinationResultView extends JFrame {
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Add navigation buttons
         JPanel buttonPanel = getButtonPanel(pageNumber);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -136,9 +135,7 @@ public class DestinationResultView extends JFrame {
         tripPanel.setLayout(new BorderLayout());
         tripPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         tripPanel.setBackground(Color.WHITE);
-        // Increment trip counter for display
 
-        // Create header panel for trip number and total price
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -147,8 +144,7 @@ public class DestinationResultView extends JFrame {
         headerPanel.add(tripLabel);
         tripPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // Create a sub-panel to hold both outbound and return flight panels side by side
-        JPanel flightsPanel = new JPanel(new GridLayout(1, 2, 10, 0)); // 1 row, 2 columns, 10px horizontal gap
+        JPanel flightsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         flightsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         flightsPanel.setBackground(Color.WHITE);
 

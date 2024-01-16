@@ -42,17 +42,24 @@ public class ActionHandler {
         String startDateString;
         String endDateString;
         try {
+            if (inputPanel.getStartDatePicker().getText().equals("")|| inputPanel.getEndDatePicker().getText().equals("") ){
+                JOptionPane.showMessageDialog(parent,"Please fill the dates fields.", "Dates fields Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             startDateString = convertDate(inputPanel.getStartDatePicker().getText());
             endDateString = convertDate(inputPanel.getEndDatePicker().getText());
+
         } catch (ParseException e){
             JOptionPane.showMessageDialog(parent,"Insert the dates in then correct way: dd MMMM yyyy", "Format Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        String minDurationString = inputPanel.getMinDaysField().getText();
-        String maxDurationString = inputPanel.getMaxDaysField().getText();
+
+        String minDurationString = inputPanel.getMinDaysField().getValue().toString();
+        String maxDurationString = inputPanel.getMaxDaysField().getValue().toString();
 
         Set<String> departureAirportsSet = getDepartureAirportsSet();
         List<String> departureAirports = new ArrayList<>(departureAirportsSet);
+
 
         Set<String> destinationCountries = new HashSet<>();
         Set<String> destinationAirportsCodes = new HashSet<>();
@@ -78,10 +85,11 @@ public class ActionHandler {
         }
         List<String> destinationAirports = new ArrayList<>(destinationAirportsCodes);
 
-        if (startDateString.isEmpty() || endDateString.isEmpty() || Objects.isNull(minDurationString) ||
-                minDurationString.isEmpty() || Objects.isNull(maxDurationString) || maxDurationString.isEmpty() ||
-                departureAirportsSet.isEmpty() || destinationAirports.isEmpty()) {
-            JOptionPane.showMessageDialog(parent,"Please fill in all fields.", "Fields Error", JOptionPane.ERROR_MESSAGE);
+        if (Objects.isNull(minDurationString) || minDurationString.isEmpty() || Objects.isNull(maxDurationString) || maxDurationString.isEmpty()){
+            JOptionPane.showMessageDialog(parent,"Please fill minDuration and maxDuration fields.", "Duration fields Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        } else if (departureAirportsSet.isEmpty() || destinationAirports.isEmpty()){
+            JOptionPane.showMessageDialog(parent,"Please set at least one Departures and Destination fields.", "ields Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

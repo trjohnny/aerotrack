@@ -20,8 +20,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.JSpinner;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SpinnerNumberModel;
 
 import lombok.Getter;
 
@@ -34,8 +35,8 @@ public class InputPanel {
     private final AerotrackApp parent;
     private final DatePicker startDatePicker;
     private final DatePicker endDatePicker;
-    private final JTextField minDaysField;
-    private final JTextField maxDaysField;
+    private final JSpinner minDaysField;
+    private final JSpinner maxDaysField;
     private final JCheckBox returnToSameAirportCheckBox;
     private final List<JXComboBox> departureAirportsComboBoxes;
     private final List<JXComboBox> destinationAirportsComboBoxes;
@@ -62,8 +63,8 @@ public class InputPanel {
         startDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
         endDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
 
-        minDaysField = new JTextField();
-        maxDaysField = new JTextField();
+        minDaysField = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+        maxDaysField = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
         minDaysField.setMaximumSize(inputSize);
         maxDaysField.setMaximumSize(inputSize);
 
