@@ -36,7 +36,7 @@ public class DestinationResultView extends JFrame {
     private void initComponents() {
         setTitle("Destination Results Console");
         int tripCounter = 0;
-        setSize(900, 600); // Adjust the size as needed
+        setSize(900, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 

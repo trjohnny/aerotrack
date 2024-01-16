@@ -112,6 +112,10 @@ public class ActionHandler {
                 try {
                     List<Trip> tripList = get();
                     if (tripList != null) {
+                        if(tripList.size() == 0){
+                            JOptionPane.showMessageDialog(parent,"Not found any flights for the entered departure-destination pairs");
+                            return;
+                        }
                         organizeResultsByDestination(tripList);
                         DestinationsButtonsView buttonsView = new DestinationsButtonsView(parent, destinationResults);
                         parent.setVisible(false);

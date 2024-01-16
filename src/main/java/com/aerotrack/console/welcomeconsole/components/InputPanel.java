@@ -62,8 +62,8 @@ public class InputPanel {
         startDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
         endDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
 
-        minDaysField = new JTextField("1", 10);
-        maxDaysField = new JTextField("15", 10);
+        minDaysField = new JTextField();
+        maxDaysField = new JTextField();
         minDaysField.setMaximumSize(inputSize);
         maxDaysField.setMaximumSize(inputSize);
 

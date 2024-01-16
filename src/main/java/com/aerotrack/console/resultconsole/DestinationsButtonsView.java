@@ -49,8 +49,6 @@ public class DestinationsButtonsView extends JFrame{
             buttonsPanel.add(destinationButton);
         }
 
-
-
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBorder(new EmptyBorder(marginSize, marginSize, marginSize, marginSize));
         JButton closeButton = new JButton("New Research");
@@ -70,13 +68,10 @@ public class DestinationsButtonsView extends JFrame{
         });
 
         add(buttonsPanel);
-
         add(bottomPanel);
-
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
-
         setLocationRelativeTo(null);
     }
 

@@ -20,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AerotrackApp extends JFrame {
-
-    public int baseHeight = 420;
     @Getter
     private final AerotrackApiClient aerotrackApiClient = AerotrackApiClient.create(AerotrackStage.ALPHA);
 
@@ -32,7 +30,7 @@ public class AerotrackApp extends JFrame {
             log.error(e.getMessage());
         }
         setTitle("AeroTrack");
-        setSize(900, baseHeight);
+        setSize(900, 420);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
