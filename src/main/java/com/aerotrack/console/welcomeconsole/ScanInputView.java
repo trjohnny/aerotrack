@@ -1,8 +1,9 @@
-// AerotrackConsole costituisce il pannello principale della console
 package com.aerotrack.console.welcomeconsole;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class ScanInputView extends JFrame {
         InputPanel inputPanel = new InputPanel(this);
         add(inputPanel.getPanel(), BorderLayout.CENTER);
 
-        ButtonManager buttonManager = new ButtonManager(this, inputPanel, textPane);
+        ButtonManager buttonManager = new ButtonManager(this, inputPanel);
         add(buttonManager.getPanel(), BorderLayout.SOUTH);
 
         setVisible(true);

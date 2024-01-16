@@ -1,4 +1,3 @@
-// ButtonManager si occupa di creazione+logica dei bottoni
 package com.aerotrack.console.welcomeconsole.components;
 
 import com.aerotrack.console.welcomeconsole.ScanInputView;
@@ -17,10 +16,10 @@ public class ButtonManager {
     private final ActionHandler actionHandler;
 
 
-    public ButtonManager(ScanInputView parent, InputPanel inputPanel, JTextPane textPane) {
+    public ButtonManager(ScanInputView parent, InputPanel inputPanel) {
+        actionHandler = new ActionHandler(inputPanel, parent);
         JLabel loadingLabel = new JLabel(new ImageIcon(Objects.requireNonNull(getClass().getResource("/loading-buffering.gif"))));
 
-        actionHandler = new ActionHandler(inputPanel);
         panel = new JPanel(new BorderLayout());
 
         JPanel departurePanel = new JPanel(new GridLayout(0, 1));
@@ -32,16 +31,13 @@ public class ButtonManager {
         JButton removeDestinationAirportButton = new JButton("Remove Destinations");
         JButton addDestinationAirportButton = new JButton("Add Destinations");
 
-        // Initialize departure airport controls
         setupAirportControls(parent, inputPanel, departurePanel, addDepartureAirportButton, removeDepartureAirportButton, true);
-
-        // Initialize destination airport controls
         setupAirportControls(parent, inputPanel, destinationPanel, addDestinationAirportButton, removeDestinationAirportButton, false);
 
         JButton submitButton = new JButton("Submit");
         loadingLabel.setVisible(false);
 
-        submitButton.addActionListener(e -> actionHandler.submitFlightInfo(parent, textPane, buttonPanel));
+        submitButton.addActionListener(e -> actionHandler.submitFlightInfo(parent, buttonPanel));
 
         buttonPanel.add(submitButton);
         buttonPanel.add(loadingLabel);
@@ -50,9 +46,6 @@ public class ButtonManager {
         panel.add(destinationPanel, BorderLayout.EAST);
         panel.add(buttonPanel, BorderLayout.SOUTH);
     }
-
-
-
 
     private void setupAirportControls(ScanInputView parent, InputPanel inputPanel, JPanel airportControlsPanel, JButton addButton, JButton removeButton, boolean isDeparture) {
         removeButton.setEnabled(false);
@@ -64,11 +57,8 @@ public class ButtonManager {
                 inputPanel.removeDestinationBox(inputPanel.getInnerDestinationPanel());
                 addButton.setEnabled(true);
             }
-
             int departureCount = inputPanel.getDepartureAirportsComboBoxes().size();
             int destinationCount = inputPanel.getDestinationAirportsComboBoxes().size();
-
-            // Abilita/disabilita il pulsante di rimozione in base al conteggio attuale
             removeButton.setEnabled(isDeparture ? departureCount > 0 : destinationCount > 0);
 
             parent.validate();
@@ -82,24 +72,14 @@ public class ButtonManager {
                     inputPanel.addDepartureBox(inputPanel.getInnerDeparturePanel());
                     departureCount++;
                 }
-
-                // Abilita/disabilita il pulsante di rimozione in base al conteggio attuale
                 removeButton.setEnabled(true);
-
-                // Abilita/disabilita il pulsante di aggiunta in base al conteggio attuale
                 addButton.setEnabled(departureCount < 5);
             } else {
                 inputPanel.addDestinationBox(inputPanel.getInnerDestinationPanel());
-
                 int destinationCount = inputPanel.getDestinationAirportsComboBoxes().size();
-
-                // Abilita/disabilita il pulsante di rimozione in base al conteggio attuale
                 removeButton.setEnabled(destinationCount > 0);
-
-                // Abilita/disabilita il pulsante di aggiunta in base al conteggio attuale
                 addButton.setEnabled(destinationCount < Integer.MAX_VALUE);
             }
-
             parent.validate();
             parent.repaint();
         });
@@ -108,6 +88,8 @@ public class ButtonManager {
         airportControlsPanel.add(removeButton);
     }
 
-
+    public JPanel getPanel() {
+        return panel;
+    }
 }
 

@@ -1,7 +1,6 @@
 package com.aerotrack.console.welcomeconsole.components;
 
 import com.aerotrack.console.welcomeconsole.ScanInputView;
-import com.aerotrack.model.entities.Airport;
 import com.aerotrack.model.entities.AirportsJsonFile;
 import com.github.lgooddatepicker.components.DatePicker;
 import org.jdesktop.swingx.JXComboBox;
@@ -14,13 +13,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
-import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
@@ -41,7 +35,6 @@ public class InputPanel {
     private final ScanInputView parent;
     private final DatePicker startDatePicker;
     private final DatePicker endDatePicker;
-
     private final JTextField minDaysField;
     private final JTextField maxDaysField;
     private final JCheckBox returnToSameAirportCheckBox;
@@ -53,48 +46,33 @@ public class InputPanel {
     private final JScrollPane departureScrollPane;
     private final JScrollPane destinationScrollPane;
     public final AirportsJsonFile airportsJsonFile;
-    private enum AirportCode {
-        LHR, CDG, FRA, AMS, MAD, BCN, FCO, MUC, LGW, IST,
-        CPH, SVO, DME, ORY, ARN, ZRH, VIE, MAN, ATH, LIS,
-        OSL, HEL, DUB, BRU, TXL, MXP, GVA, PRG, WAW, DUS,
-        BUD, OTP, MLA, STR, TSF, TRS, HAM, VCE, EIN, STN,
-        VLC, NCE, BLQ, NAP, BHX, GLA, LBA, EDI, BRS, SEN;
-
-
-        public static List<String> toList(){
-            return Arrays.stream(AirportCode.values())
-                    .map(Enum::toString)
-                    .collect(Collectors.toList());
-        }
-    }
 
 
     public InputPanel(ScanInputView parent) {
         this.parent = parent;
+        airportsJsonFile = parent.getAerotrackApiClient().getAirportsJson();
+
         panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+
+        Dimension inputSize = new Dimension(450, 20);
+        Dimension labelSize = new Dimension(450, 20);
+
         startDatePicker = new DatePicker();
         endDatePicker = new DatePicker();
+        startDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
+        endDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
+
         minDaysField = new JTextField("1", 10);
         maxDaysField = new JTextField("15", 10);
+        minDaysField.setMaximumSize(inputSize);
+        maxDaysField.setMaximumSize(inputSize);
+
         returnToSameAirportCheckBox = new JCheckBox("Return to the same airport", true);
         departureAirportsComboBoxes = new ArrayList<>();
         destinationAirportsComboBoxes = new ArrayList<>();
 
-
-        airportsJsonFile = parent.getAerotrackApiClient().getAirportsJson();
-
-        Dimension inputSize = new Dimension(450, 20);
-        Dimension labelSize = new Dimension(450, 20);
-        startDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
-        endDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
-        minDaysField.setMaximumSize(inputSize);
-        maxDaysField.setMaximumSize(inputSize);
-
-        // Create the date panel
         JPanel datePanel = new JPanel(new GridLayout(2, 2, 5, 5));
-
-        // Prima colonna
         JLabel startDateLabel = new JLabel("Start Date (yyyy-MM-dd):");
         startDateLabel.setPreferredSize(labelSize);
         datePanel.add(startDateLabel);
@@ -103,8 +81,6 @@ public class InputPanel {
         endDateLabel.setPreferredSize(labelSize);
         datePanel.add(endDateLabel);
         datePanel.add(endDatePicker);
-
-        // Seconda colonna: Min duration e Max duration
         JLabel minDurationLabel = new JLabel("Min duration of the trip (days):");
         minDurationLabel.setPreferredSize(labelSize);
         datePanel.add(minDurationLabel);
@@ -114,16 +90,12 @@ public class InputPanel {
         datePanel.add(maxDurationLabel);
         datePanel.add(maxDaysField);
 
-        // Aggiungi il datePanel al pannello principale
         datePanel.setMaximumSize(datePanel.getPreferredSize());
         panel.add(datePanel);
 
-        // Aggiungi il checkBox allineato a sinistra
         JPanel checkBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         checkBoxPanel.add(returnToSameAirportCheckBox);
         panel.add(checkBoxPanel);
-
-
 
         innerDestinationPanel = new JPanel();
         innerDestinationPanel.setLayout(new BoxLayout(innerDestinationPanel, BoxLayout.Y_AXIS));
@@ -132,7 +104,6 @@ public class InputPanel {
         innerDestinationPanel.setAlignmentY(Component.TOP_ALIGNMENT);
         innerDeparturePanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
-        // Initialize and add scroll panes for the inner panels
         departureScrollPane = new JScrollPane(innerDeparturePanel);
         departureScrollPane.setPreferredSize(new Dimension(450, 1000));
         departureScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -142,19 +113,15 @@ public class InputPanel {
         destinationScrollPane.setPreferredSize(new Dimension(450, 1000));
         destinationScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         destinationScrollPane.setAlignmentY(Component.TOP_ALIGNMENT);
+        departureScrollPane.setBorder(BorderFactory.createTitledBorder("Departure Airports"));
+        destinationScrollPane.setBorder(BorderFactory.createTitledBorder("Destinations"));
 
-        // Create a container panel for scroll panes to put them in the same line
         JPanel scrollPaneContainer = new JPanel();
         scrollPaneContainer.setLayout(new BoxLayout(scrollPaneContainer, BoxLayout.LINE_AXIS));
         scrollPaneContainer.add(departureScrollPane);
         scrollPaneContainer.add(destinationScrollPane);
         panel.add(scrollPaneContainer);
 
-        // Optionally, add borders around the scroll panes for visual separation
-        departureScrollPane.setBorder(BorderFactory.createTitledBorder("Departure Airports"));
-        destinationScrollPane.setBorder(BorderFactory.createTitledBorder("Destinations"));
-
-        // Remember to revalidate and repaint the panel when adding or removing components
         panel.revalidate();
         panel.repaint();
     }
@@ -176,7 +143,6 @@ public class InputPanel {
         airportsPanel.add(airportsComboBox);
         return airportsComboBox;
     }
-
 
     public void addDepartureBox(JPanel innerDeparturePanel){
         List<String> emptyList = new ArrayList<>();

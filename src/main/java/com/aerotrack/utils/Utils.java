@@ -1,8 +1,5 @@
 package com.aerotrack.utils;
 
-import com.aerotrack.model.entities.Airport;
-import com.aerotrack.model.entities.AirportsJsonFile;
-
 import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -15,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class Utils {
 
