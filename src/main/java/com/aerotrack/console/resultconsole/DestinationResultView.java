@@ -73,7 +73,7 @@ public class DestinationResultView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(900, 550));
-        scrollPane.getVerticalScrollBar().setUnitIncrement(10);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(5);
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
