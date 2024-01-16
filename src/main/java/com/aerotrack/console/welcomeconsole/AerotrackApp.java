@@ -3,25 +3,34 @@ package com.aerotrack.console.welcomeconsole;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Font;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import com.aerotrack.console.resultconsole.DestinationsButtonsPanel;
 import com.aerotrack.console.welcomeconsole.components.ButtonManager;
 import com.aerotrack.console.welcomeconsole.components.InputPanel;
 import com.aerotrack.model.entities.AerotrackStage;
+import com.aerotrack.model.entities.Trip;
 import com.aerotrack.utils.clients.api.AerotrackApiClient;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
 @Slf4j
 public class AerotrackApp extends JFrame {
-    @Getter
     private final AerotrackApiClient aerotrackApiClient = AerotrackApiClient.create(AerotrackStage.ALPHA);
+    private final CardLayout cardLayout;
+    private final JPanel mainPanel;
+    private final DestinationsButtonsPanel destinationPanel ;
 
     private AerotrackApp()  {
         try {
@@ -29,11 +38,17 @@ public class AerotrackApp extends JFrame {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+        cardLayout = new CardLayout();
+        getContentPane().setLayout(cardLayout);
+
         setTitle("AeroTrack");
+        setResizable(false);
         setSize(900, 420);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+
+        mainPanel = new JPanel(new BorderLayout());
+        destinationPanel = new DestinationsButtonsPanel(this, null);
 
         EmptyBorder border = new EmptyBorder(5,20,5,20);
 
@@ -41,19 +56,34 @@ public class AerotrackApp extends JFrame {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setBorder(border);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        add(titleLabel, BorderLayout.NORTH);
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
 
         InputPanel inputPanel = new InputPanel(this);
         inputPanel.getPanel().setBorder(border);
-        add(inputPanel.getPanel(), BorderLayout.CENTER);
+        mainPanel.add(inputPanel.getPanel(), BorderLayout.CENTER);
 
         ButtonManager buttonManager = new ButtonManager(this, inputPanel);
-        add(buttonManager.getPanel(), BorderLayout.SOUTH);
+        mainPanel.add(buttonManager.getPanel(), BorderLayout.SOUTH);
+
+        getContentPane().add(mainPanel, "MainPanel");
+        getContentPane().add(destinationPanel, "DestinationPanel");
+
+        cardLayout.show(getContentPane(), "MainPanel");
 
         setVisible(true);
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AerotrackApp::new);
+    }
+
+    public void showDestinationPanel(Map<String, List<Trip>> destinationResults) {
+        destinationPanel.setDestinationResults(destinationResults);
+        cardLayout.show(getContentPane(), "DestinationPanel");
+        destinationPanel.initComponents();
+    }
+
+    public void showMainPanel() {
+        cardLayout.show(getContentPane(), "MainPanel");
     }
 }

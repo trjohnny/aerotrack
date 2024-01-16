@@ -1,6 +1,5 @@
 package com.aerotrack.console.welcomeconsole.components;
 
-import com.aerotrack.console.resultconsole.DestinationsButtonsView;
 import com.aerotrack.model.entities.Airport;
 import com.aerotrack.model.protocol.ScanQueryRequest;
 import com.aerotrack.console.welcomeconsole.AerotrackApp;
@@ -17,6 +16,7 @@ import java.util.Set;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jdesktop.swingx.JXComboBox;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -51,18 +51,7 @@ public class ActionHandler {
         String minDurationString = inputPanel.getMinDaysField().getText();
         String maxDurationString = inputPanel.getMaxDaysField().getText();
 
-        Set<String> departureAirportsSet = new HashSet<>();
-        for (JXComboBox departureField : inputPanel.getDepartureAirportsComboBoxes()) {
-            String departureAirport = (String) departureField.getSelectedItem();
-            if (departureAirport != null && !departureAirport.trim().isEmpty()) {
-                if (departureAirport.contains("[") && departureAirport.contains("]")) {
-                    int startIdx = departureAirport.indexOf("[") + 1;
-                    int endIdx = departureAirport.indexOf("]");
-                    String airportCode = departureAirport.substring(startIdx, endIdx);
-                    departureAirportsSet.add(airportCode);
-                }
-            }
-        }
+        Set<String> departureAirportsSet = getDepartureAirportsSet();
         List<String> departureAirports = new ArrayList<>(departureAirportsSet);
 
         Set<String> destinationCountries = new HashSet<>();
@@ -112,14 +101,12 @@ public class ActionHandler {
                 try {
                     List<Trip> tripList = get();
                     if (tripList != null) {
-                        if(tripList.size() == 0){
+                        if(tripList.isEmpty()){
                             JOptionPane.showMessageDialog(parent,"Not found any flights for the entered departure-destination pairs");
                             return;
                         }
                         organizeResultsByDestination(tripList);
-                        DestinationsButtonsView buttonsView = new DestinationsButtonsView(parent, destinationResults);
-                        parent.setVisible(false);
-                        buttonsView.setVisible(true);
+                        parent.showDestinationPanel(destinationResults);
                     } else {
                         JOptionPane.showMessageDialog(parent,"Error: Failed to get valid response from API.", "Response Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -135,6 +122,19 @@ public class ActionHandler {
         buttonPanel.getComponent(0).setEnabled(false);
         buttonPanel.getComponent(1).setVisible(true);
         worker.execute();
+    }
+
+    @NotNull
+    private Set<String> getDepartureAirportsSet() {
+        Set<String> departureAirportsSet = new HashSet<>();
+        for (JXComboBox departureField : inputPanel.getDepartureAirportsComboBoxes()) {
+            String departureAirport = (String) departureField.getSelectedItem();
+            int startIdx = Objects.requireNonNull(departureAirport).indexOf("[") + 1;
+            int endIdx = departureAirport.indexOf("]");
+            String airportCode = departureAirport.substring(startIdx, endIdx);
+            departureAirportsSet.add(airportCode);
+        }
+        return departureAirportsSet;
     }
 
     public ScanQueryRequest buildScanQueryRequest(String minDurationString, String maxDurationString,String startDateString, String endDateString, List<String> departureAirports, Boolean returnToSameAirport, List<String> destinationAirports) {

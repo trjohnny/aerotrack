@@ -2,6 +2,7 @@ package com.aerotrack.console.resultconsole;
 
 import com.aerotrack.console.welcomeconsole.AerotrackApp;
 import com.aerotrack.model.entities.Trip;
+import lombok.Setter;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,32 +13,28 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.Map;
 
-public class DestinationsButtonsView extends JFrame{
+public class DestinationsButtonsPanel extends JPanel{
 
     private final AerotrackApp parent;
-    private final Map<String, List<Trip>> destinationResults;
+    @Setter
+    private Map<String, List<Trip>> destinationResults;
 
-    public DestinationsButtonsView(AerotrackApp parent, Map<String, List<Trip>> destinationResults) {
+    public DestinationsButtonsPanel(AerotrackApp parent, Map<String, List<Trip>> destinationResults) {
         this.parent = parent;
         this.destinationResults = destinationResults;
-        initComponents();
     }
 
-    private void initComponents() {
+    public void initComponents() {
         setLayout(new FlowLayout(FlowLayout.CENTER,10,25));
-        setTitle("Choose the Destination");
-        setResizable(false);
 
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayout(0, 3));
 
         int marginSize = 10;
-        getRootPane().setBorder(new EmptyBorder(marginSize, marginSize, marginSize, marginSize));
+        parent.getRootPane().setBorder(new EmptyBorder(marginSize, marginSize, marginSize, marginSize));
         buttonsPanel.setBorder(new EmptyBorder(marginSize, marginSize, marginSize, marginSize));
 
         for (String destination : destinationResults.keySet()) {
@@ -55,24 +52,11 @@ public class DestinationsButtonsView extends JFrame{
         closeButton.setBackground(Color.CYAN);
         closeButton.setForeground(Color.BLACK);
         closeButton.addActionListener(e -> {
-            dispose();
-            parent.setVisible(true);
+            parent.showMainPanel();
         });
         bottomPanel.add(closeButton);
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                parent.setVisible(true);
-            }
-        });
-
         add(buttonsPanel);
         add(bottomPanel);
-
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        pack();
-        setLocationRelativeTo(null);
     }
 
     private void showDestinationResults(String destination) {
