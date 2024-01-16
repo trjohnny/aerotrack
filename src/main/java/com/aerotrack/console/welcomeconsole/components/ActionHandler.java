@@ -1,11 +1,10 @@
 package com.aerotrack.console.welcomeconsole.components;
 
 import com.aerotrack.console.resultconsole.DestinationsButtonsView;
-import com.aerotrack.model.entities.AerotrackStage;
+import com.aerotrack.model.entities.Airport;
 import com.aerotrack.model.protocol.ScanQueryRequest;
 import com.aerotrack.console.welcomeconsole.ScanInputView;
 import com.aerotrack.model.entities.Trip;
-
 
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
@@ -26,10 +25,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.aerotrack.utils.clients.api.AerotrackApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.jdesktop.swingx.JXComboBox;
 
+import static com.aerotrack.utils.Utils.countryNameToCodeMap;
 import static com.aerotrack.utils.Utils.appendErrorText;
 import static com.aerotrack.utils.Utils.convertDate;
 
@@ -37,14 +36,11 @@ import static com.aerotrack.utils.Utils.convertDate;
 @Slf4j
 public class ActionHandler {
     private final InputPanel inputPanel;
-    private final AerotrackApiClient aerotrackApiClient;
     private final Map<String, List<Trip>> destinationResults = new LinkedHashMap<>();
-
 
 
     public ActionHandler(InputPanel inputPanel){
         this.inputPanel = inputPanel;
-        this.aerotrackApiClient = AerotrackApiClient.create(AerotrackStage.ALPHA);
     }
 
 
@@ -60,23 +56,46 @@ public class ActionHandler {
         }
         String minDurationString = inputPanel.getMinDaysField().getText();
         String maxDurationString = inputPanel.getMaxDaysField().getText();
+
         List<String> departureAirports = new ArrayList<>();
         for (JXComboBox departureField : inputPanel.getDepartureAirportsComboBoxes()) {
             String departureAirport = (String) departureField.getSelectedItem();
             if (departureAirport != null && !departureAirport.trim().isEmpty()) {
-                departureAirports.add(departureAirport.trim());
+                if (departureAirport.contains("[") && departureAirport.contains("]")) {
+                    int startIdx = departureAirport.indexOf("[") + 1;
+                    int endIdx = departureAirport.indexOf("]");
+                    String airportCode = departureAirport.substring(startIdx, endIdx);
+                    departureAirports.add(airportCode);
+                }
             }
         }
 
-        List<String> destinationAirports = new ArrayList<>();
+        Set<String> destinations = new HashSet<>();
+        Set<String> destinationAirportsCodes = new HashSet<>();
         for (JXComboBox destinationField : inputPanel.getDestinationAirportsComboBoxes()) {
             String destinationAirport = (String) destinationField.getSelectedItem();
             if (destinationAirport != null && !destinationAirport.trim().isEmpty()) {
-                destinationAirports.add(destinationAirport.trim());
+                if(countryNameToCodeMap.containsKey(destinationAirport)){
+                    destinations.add(countryNameToCodeMap.get(destinationAirport));
+                }
+                if (destinationAirport.contains("[") && destinationAirport.contains("]")) {
+                    int startIdx = destinationAirport.indexOf("[") + 1;
+                    int endIdx = destinationAirport.indexOf("]");
+                    String airportCode = destinationAirport.substring(startIdx, endIdx);
+                    destinationAirportsCodes.add(airportCode);
+                }
             }
         }
+        for (String countryCode : destinations){
+            for (Airport airport : inputPanel.airportsJsonFile.getAirports()){
+                if(countryCode.equals(airport.getCountryCode())){
+                    destinationAirportsCodes.add(airport.getAirportCode());
+                }
+            }
+        }
+        List<String> destinationAirports = new ArrayList<>(destinationAirportsCodes);
 
-        // Controllo che i campi siano pieni
+
         if (startDateString.isEmpty() || endDateString.isEmpty() || Objects.isNull(minDurationString) ||
                 minDurationString.isEmpty() || Objects.isNull(maxDurationString) || maxDurationString.isEmpty() ||
                 departureAirports.isEmpty() || destinationAirports.isEmpty()) {
@@ -156,7 +175,7 @@ public class ActionHandler {
         SwingWorker<List<Trip>, Void> worker = new SwingWorker<>() {
             @Override
             protected List<Trip> doInBackground() {
-                return aerotrackApiClient.getBestFlight(scanQueryRequest);
+                return parent.getAerotrackApiClient().getBestFlight(scanQueryRequest);
             }
 
             @Override
@@ -169,7 +188,8 @@ public class ActionHandler {
                         organizeResultsByDestination(tripList);
 
                         // Crea una nuova finestra con i bottoni delle destinazioni
-                        DestinationsButtonsView buttonsView = new DestinationsButtonsView(destinationResults);
+                        DestinationsButtonsView buttonsView = new DestinationsButtonsView(parent, destinationResults);
+                        parent.setVisible(false);
                         buttonsView.setVisible(true);
 
                         // La chiamata è andata a buon fine, puoi gestire la risposta qui

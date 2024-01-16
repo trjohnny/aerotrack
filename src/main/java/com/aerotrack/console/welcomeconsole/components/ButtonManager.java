@@ -77,7 +77,7 @@ public class ButtonManager {
                 }
 
                 // Abilita/disabilita il pulsante di rimozione in base al conteggio attuale
-                removeButton.setEnabled(departureCount > 1);
+                removeButton.setEnabled(true);
 
                 // Abilita/disabilita il pulsante di aggiunta in base al conteggio attuale
                 addButton.setEnabled(departureCount < 5);

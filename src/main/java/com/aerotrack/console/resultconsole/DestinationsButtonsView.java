@@ -1,30 +1,38 @@
 package com.aerotrack.console.resultconsole;
 
+import com.aerotrack.console.welcomeconsole.ScanInputView;
 import com.aerotrack.model.entities.Trip;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.Map;
 
 public class DestinationsButtonsView extends JFrame{
+
+    private final ScanInputView parent;
     private final Map<String, List<Trip>> destinationResults;
 
-    public DestinationsButtonsView(Map<String, List<Trip>> destinationResults) {
+    public DestinationsButtonsView(ScanInputView parent, Map<String, List<Trip>> destinationResults) {
+        this.parent = parent;
         this.destinationResults = destinationResults;
         initComponents();
     }
 
     private void initComponents() {
         // Layout e configurazione della finestra
-        setLayout(new FlowLayout(FlowLayout.LEFT));  // Utilizza un layout di flusso con allineamento a sinistra
+        setLayout(new FlowLayout(FlowLayout.CENTER,10,25));  // Utilizza un layout di flusso con allineamento a sinistra
         setTitle("Choose the Destination");
+        setResizable(false);
 
         // Pannello contenitore per i bottoni
         JPanel buttonsPanel = new JPanel();
@@ -33,6 +41,7 @@ public class DestinationsButtonsView extends JFrame{
         // Aggiungi un po' di spazio intorno ai bottoni
         int marginSize = 10;
         getRootPane().setBorder(new EmptyBorder(marginSize, marginSize, marginSize, marginSize));
+        buttonsPanel.setBorder(new EmptyBorder(marginSize, marginSize, marginSize, marginSize));
 
         // Crea dinamicamente i bottoni per ogni destinazione
         for (String destination : destinationResults.keySet()) {
@@ -44,8 +53,32 @@ public class DestinationsButtonsView extends JFrame{
             buttonsPanel.add(destinationButton);
         }
 
+
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBorder(new EmptyBorder(marginSize, marginSize, marginSize, marginSize));
+        JButton closeButton = new JButton("New Research");
+        closeButton.setBackground(Color.CYAN);
+        closeButton.setForeground(Color.BLACK);
+        closeButton.addActionListener(e -> {
+            dispose();
+            parent.setVisible(true);
+        });
+        bottomPanel.add(closeButton);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Chiamato quando la finestra viene chiusa
+                parent.setVisible(true);
+            }
+        });
+
         // Aggiungi il pannello dei bottoni alla finestra principale
         add(buttonsPanel);
+
+        add(bottomPanel);
+
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
