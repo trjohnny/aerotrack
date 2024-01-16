@@ -2,22 +2,21 @@ package com.aerotrack.console.welcomeconsole;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.io.IOException;
 import java.util.Objects;
 
 import com.aerotrack.console.welcomeconsole.components.ButtonManager;
 import com.aerotrack.console.welcomeconsole.components.InputPanel;
 import com.aerotrack.model.entities.AerotrackStage;
-import com.aerotrack.utils.ResourceHelper;
 import com.aerotrack.utils.clients.api.AerotrackApiClient;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import static com.aerotrack.utils.Utils.addStyledText;
 
 @Slf4j
 public class AerotrackApp extends JFrame {
@@ -32,21 +31,22 @@ public class AerotrackApp extends JFrame {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-        setTitle(ResourceHelper.getString("title"));
+        setTitle("AeroTrack");
         setSize(900, baseHeight);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JTextPane textPane = new JTextPane();
-        textPane.setEditable(false);
+        EmptyBorder border = new EmptyBorder(5,20,5,20);
 
-        addStyledText(ResourceHelper.getString("welcomeMessage"), null, textPane);
-
-        JScrollPane scrollPane = new JScrollPane(textPane);
-        add(scrollPane, BorderLayout.NORTH);
+        JLabel titleLabel = new JLabel("Scan Flights");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setBorder(border);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        add(titleLabel, BorderLayout.NORTH);
 
         InputPanel inputPanel = new InputPanel(this);
+        inputPanel.getPanel().setBorder(border);
         add(inputPanel.getPanel(), BorderLayout.CENTER);
 
         ButtonManager buttonManager = new ButtonManager(this, inputPanel);

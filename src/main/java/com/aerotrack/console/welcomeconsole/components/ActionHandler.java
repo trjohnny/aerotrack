@@ -8,14 +8,12 @@ import com.aerotrack.model.entities.Trip;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jdesktop.swingx.JXComboBox;
@@ -32,7 +30,6 @@ import static com.aerotrack.utils.Utils.convertDate;
 public class ActionHandler {
     private final AerotrackApp parent;
     private final InputPanel inputPanel;
-
     private final Map<String, List<Trip>> destinationResults = new LinkedHashMap<>();
 
 
@@ -40,7 +37,6 @@ public class ActionHandler {
         this.inputPanel = inputPanel;
         this.parent = parent;
     }
-
 
     public void submitFlightInfo(AerotrackApp parent, JPanel buttonPanel) {
         String startDateString;

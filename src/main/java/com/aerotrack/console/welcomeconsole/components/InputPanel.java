@@ -7,7 +7,6 @@ import org.jdesktop.swingx.JXComboBox;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;

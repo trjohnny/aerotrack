@@ -26,7 +26,6 @@ import java.util.TimeZone;
 
 public class DestinationResultView extends JFrame {
     private final List<Trip> destinationTrips;
-    private static int tripCounter = 0;
     private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 
     public DestinationResultView(List<Trip> destinationTrips) {
@@ -36,7 +35,7 @@ public class DestinationResultView extends JFrame {
 
     private void initComponents() {
         setTitle("Destination Results Console");
-        tripCounter = 0;
+        int tripCounter = 0;
         setSize(900, 600); // Adjust the size as needed
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -53,10 +52,8 @@ public class DestinationResultView extends JFrame {
             tripPanel.setLayout(new BorderLayout());
             tripPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
             tripPanel.setBackground(Color.WHITE);
-            // Increment trip counter for display
             tripCounter++;
 
-            // Create header panel for trip number and total price
             JPanel headerPanel = new JPanel();
             headerPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
             headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -65,7 +62,6 @@ public class DestinationResultView extends JFrame {
             headerPanel.add(tripLabel);
             tripPanel.add(headerPanel, BorderLayout.NORTH);
 
-            // Create a sub-panel to hold both outbound and return flight panels side by side
             JPanel flightsPanel = new JPanel(new GridLayout(1, 2, 10, 0)); // 1 row, 2 columns, 10px horizontal gap
             flightsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             flightsPanel.setBackground(Color.WHITE);
@@ -81,8 +77,6 @@ public class DestinationResultView extends JFrame {
             mainPanel.add(tripPanel);
             mainPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Add space between cards
         }
-
-        // Set the scroll pane to start at the top when the view is displayed
         SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
 
         setVisible(true);
@@ -113,7 +107,7 @@ public class DestinationResultView extends JFrame {
 
     private Date parseIso8601Date(String isoDate) {
         SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC")); // ISO 8601 is generally in UTC
+        iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
             return iso8601Format.parse(isoDate);
         } catch (ParseException e) {

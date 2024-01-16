@@ -29,21 +29,17 @@ public class DestinationsButtonsView extends JFrame{
     }
 
     private void initComponents() {
-        // Layout e configurazione della finestra
-        setLayout(new FlowLayout(FlowLayout.CENTER,10,25));  // Utilizza un layout di flusso con allineamento a sinistra
+        setLayout(new FlowLayout(FlowLayout.CENTER,10,25));
         setTitle("Choose the Destination");
         setResizable(false);
 
-        // Pannello contenitore per i bottoni
         JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setLayout(new GridLayout(0, 3));  // Imposta il GridLayout con un numero fisso di colonne (3 nel tuo caso)
+        buttonsPanel.setLayout(new GridLayout(0, 3));
 
-        // Aggiungi un po' di spazio intorno ai bottoni
         int marginSize = 10;
         getRootPane().setBorder(new EmptyBorder(marginSize, marginSize, marginSize, marginSize));
         buttonsPanel.setBorder(new EmptyBorder(marginSize, marginSize, marginSize, marginSize));
 
-        // Crea dinamicamente i bottoni per ogni destinazione
         for (String destination : destinationResults.keySet()) {
             JButton destinationButton = new JButton("<html>Flight to " + destination + "<br>Starting from " + destinationResults.get(destination).get(0).getTotalPrice() + "€</html>");
 
@@ -69,12 +65,10 @@ public class DestinationsButtonsView extends JFrame{
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                // Chiamato quando la finestra viene chiusa
                 parent.setVisible(true);
             }
         });
 
-        // Aggiungi il pannello dei bottoni alla finestra principale
         add(buttonsPanel);
 
         add(bottomPanel);
@@ -87,7 +81,6 @@ public class DestinationsButtonsView extends JFrame{
     }
 
     private void showDestinationResults(String destination) {
-        // Mostra la finestra con i risultati della destinazione corrispondente
         DestinationResultView destinationResultView = new DestinationResultView(destinationResults.get(destination));
         destinationResultView.setVisible(true);
     }

@@ -3,7 +3,11 @@ package com.aerotrack.console.welcomeconsole.components;
 import com.aerotrack.console.welcomeconsole.AerotrackApp;
 import lombok.Getter;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -21,6 +25,7 @@ public class ButtonManager {
         JLabel loadingLabel = new JLabel(new ImageIcon(Objects.requireNonNull(getClass().getResource("/loading-buffering.gif"))));
 
         panel = new JPanel(new BorderLayout());
+        panel.setBorder(new EmptyBorder(5,20,10,20));
 
         JPanel departurePanel = new JPanel(new GridLayout(0, 1));
         JPanel destinationPanel = new JPanel(new GridLayout(0, 1));
