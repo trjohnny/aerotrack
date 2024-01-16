@@ -2,21 +2,24 @@
 package com.aerotrack.console.welcomeconsole.components;
 
 import com.aerotrack.console.welcomeconsole.ScanInputView;
+import lombok.Getter;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.util.Objects;
 
 
 public class ButtonManager {
+    @Getter
     private final JPanel panel;
     private final ActionHandler actionHandler;
 
 
     public ButtonManager(ScanInputView parent, InputPanel inputPanel, JTextPane textPane) {
+        JLabel loadingLabel = new JLabel(new ImageIcon(Objects.requireNonNull(getClass().getResource("/loading-buffering.gif"))));
+
         actionHandler = new ActionHandler(inputPanel);
         panel = new JPanel(new BorderLayout());
 
@@ -36,8 +39,12 @@ public class ButtonManager {
         setupAirportControls(parent, inputPanel, destinationPanel, addDestinationAirportButton, removeDestinationAirportButton, false);
 
         JButton submitButton = new JButton("Submit");
-        submitButton.addActionListener(e -> actionHandler.submitFlightInfo(parent, textPane));
+        loadingLabel.setVisible(false);
+
+        submitButton.addActionListener(e -> actionHandler.submitFlightInfo(parent, textPane, buttonPanel));
+
         buttonPanel.add(submitButton);
+        buttonPanel.add(loadingLabel);
 
         panel.add(departurePanel, BorderLayout.WEST);
         panel.add(destinationPanel, BorderLayout.EAST);
@@ -102,8 +109,5 @@ public class ButtonManager {
     }
 
 
-    public JPanel getPanel() {
-        return panel;
-    }
 }
 

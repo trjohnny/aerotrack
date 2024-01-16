@@ -6,9 +6,7 @@ import com.aerotrack.model.protocol.ScanQueryRequest;
 import com.aerotrack.console.welcomeconsole.ScanInputView;
 import com.aerotrack.model.entities.Trip;
 
-import javax.swing.JTextPane;
-import javax.swing.SwingWorker;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -44,7 +42,7 @@ public class ActionHandler {
     }
 
 
-    public void submitFlightInfo(ScanInputView parent, JTextPane textPane) {
+    public void submitFlightInfo(ScanInputView parent, JTextPane textPane, JPanel buttonPanel) {
         String startDateString;
         String endDateString;
         try {
@@ -171,6 +169,7 @@ public class ActionHandler {
             return;
         }
 
+
         ScanQueryRequest scanQueryRequest = buildScanQueryRequest(minDurationString, maxDurationString, startDateString, endDateString, departureAirports, inputPanel.getReturnToSameAirportCheckBox().isSelected(), destinationAirports);
         SwingWorker<List<Trip>, Void> worker = new SwingWorker<>() {
             @Override
@@ -203,10 +202,15 @@ public class ActionHandler {
                     e.printStackTrace();
                     // Gestisci l'eccezione
                     appendErrorText("Error: An exception occurred during API call.", textPane);
+                } finally {
+                    buttonPanel.getComponent(0).setEnabled(true);
+                    buttonPanel.getComponent(1).setVisible(false);
                 }
             }
         };
         // Avvia il lavoro in background
+        buttonPanel.getComponent(0).setEnabled(false);
+        buttonPanel.getComponent(1).setVisible(true);
         worker.execute();
     }
 
