@@ -42,7 +42,7 @@ public class ActionHandler {
         String startDateString;
         String endDateString;
         try {
-            if (inputPanel.getStartDatePicker().getText().equals("")|| inputPanel.getEndDatePicker().getText().equals("") ){
+            if (inputPanel.getStartDatePicker().getText().isEmpty() || inputPanel.getEndDatePicker().getText().isEmpty()){
                 JOptionPane.showMessageDialog(parent,"Please fill the dates fields.", "Dates fields Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -110,16 +110,15 @@ public class ActionHandler {
                     List<Trip> tripList = get();
                     if (tripList != null) {
                         if(tripList.isEmpty()){
-                            JOptionPane.showMessageDialog(parent,"Not found any flights for the entered departure-destination pairs");
+                            JOptionPane.showMessageDialog(parent,"No flights found for the given departure-destination combinations.");
                             return;
                         }
                         organizeResultsByDestination(tripList);
                         parent.showDestinationPanel(destinationResults);
                     } else {
-                        JOptionPane.showMessageDialog(parent,"Error: Failed to get valid response from API.", "Response Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(parent,"Error: Null response from API.", "Response Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
                     JOptionPane.showMessageDialog(parent,"Error: An exception occurred during API call.", "Response Error", JOptionPane.ERROR_MESSAGE);
                 } finally {
                     buttonPanel.getComponent(0).setEnabled(true);

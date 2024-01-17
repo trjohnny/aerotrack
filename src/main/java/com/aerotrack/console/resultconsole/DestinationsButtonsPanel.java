@@ -54,7 +54,7 @@ public class DestinationsButtonsPanel extends JPanel{
                 .collect(Collectors.toMap(Airport::getAirportCode, Function.identity()));
 
         for (String airportCode : destinationResults.keySet()) {
-            JButton destinationButton = new JButton("<html>Flight to " + mapAirportCodeToName.get(airportCode).getName() + "<br>Starting from " + destinationResults.get(airportCode).get(0).getTotalPrice() + "€</html>");
+            JButton destinationButton = new JButton("<html>Flights to " + mapAirportCodeToName.get(airportCode).getName() + "<br>Starting from " + destinationResults.get(airportCode).get(0).getTotalPrice() + "€</html>");
 
             destinationButton.setPreferredSize(new Dimension(195, 70));
             destinationButton.setMargin(new Insets(10, 10, 10, 10));

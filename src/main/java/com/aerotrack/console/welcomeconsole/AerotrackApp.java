@@ -94,14 +94,14 @@ public class AerotrackApp extends JFrame {
             // Ensure the splash screen is displayed for a minimum of one second
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
         // If the application is still initializing, wait for it to finish
         try {
             appThread.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 
