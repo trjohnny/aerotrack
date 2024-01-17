@@ -213,7 +213,6 @@ public class DestinationResultFrame extends JFrame {
         calendar2.set(Calendar.SECOND, 0);
         calendar2.set(Calendar.MILLISECOND, 0);
 
-        // Calculate the difference in days
         long timeDiff = calendar2.getTimeInMillis() - calendar1.getTimeInMillis();
         return (int) (timeDiff / (24 * 60 * 60 * 1000));
     }
@@ -224,7 +223,6 @@ public class DestinationResultFrame extends JFrame {
         try {
             return iso8601Format.parse(isoDate);
         } catch (ParseException e) {
-            // Should never be thrown!!!
             throw new RuntimeException(e);
         }
     }

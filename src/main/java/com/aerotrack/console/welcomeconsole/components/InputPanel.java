@@ -28,7 +28,6 @@ import lombok.Getter;
 
 import static com.aerotrack.utils.Utils.countryNameToCodeMap;
 
-
 @Getter
 public class InputPanel {
     private final JPanel panel;
