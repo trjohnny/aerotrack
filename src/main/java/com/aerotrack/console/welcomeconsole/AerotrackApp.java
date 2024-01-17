@@ -74,7 +74,30 @@ public class AerotrackApp extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(AerotrackApp::new);
+        final SplashScreen splashScreen = new SplashScreen("src/main/resources/bg_logo.png");
+
+        // Create a new thread for the application initialization
+        Thread appThread = new Thread(() -> {
+            new AerotrackApp(); // Initialize the main application
+            SwingUtilities.invokeLater(splashScreen::close); // Close the splash screen
+        });
+
+        // Start the application thread
+        appThread.start();
+
+        try {
+            // Ensure the splash screen is displayed for a minimum of one second
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // If the application is still initializing, wait for it to finish
+        try {
+            appThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void showDestinationPanel(Map<String, List<Trip>> destinationResults) {

@@ -5,7 +5,6 @@ import com.aerotrack.model.entities.Trip;
 import lombok.Setter;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
@@ -28,6 +27,7 @@ public class DestinationsButtonsPanel extends JPanel{
     }
 
     public void initComponents() {
+        removeAll();
         setLayout(new FlowLayout(FlowLayout.CENTER,10,25));
 
         JPanel buttonsPanel = new JPanel();
@@ -60,7 +60,7 @@ public class DestinationsButtonsPanel extends JPanel{
     }
 
     private void showDestinationResults(String destination) {
-        DestinationResultView destinationResultView = new DestinationResultView(destinationResults.get(destination));
-        destinationResultView.setVisible(true);
+        DestinationResultFrame destinationResultFrame = new DestinationResultFrame(destinationResults.get(destination));
+        destinationResultFrame.setVisible(true);
     }
 }

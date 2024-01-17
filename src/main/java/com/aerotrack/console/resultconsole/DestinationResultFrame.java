@@ -21,18 +21,19 @@ import java.awt.GridLayout;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class DestinationResultView extends JFrame {
+public class DestinationResultFrame extends JFrame {
     private final List<Trip> destinationTrips;
     private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
     private int currentPage = 0;
     private static final int MAX_TRIPS_PER_PAGE = 10;
     private final JPanel mainPanel;
 
-    public DestinationResultView(List<Trip> destinationTrips) {
+    public DestinationResultFrame(List<Trip> destinationTrips) {
         this.destinationTrips = destinationTrips;
         setTitle("Destination Results Console");
         setSize(900, 600);
@@ -136,10 +137,15 @@ public class DestinationResultView extends JFrame {
         tripPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         tripPanel.setBackground(Color.WHITE);
 
+        Flight outboundFlight = trip.getOutboundFlights().get(0);
+        Flight returnFlight = trip.getReturnFlights().get(0);
+
+        int duration = getDaysDifference(outboundFlight.getArrivalDateTime(), returnFlight.getDepartureDateTime());
+
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        JLabel tripLabel = new JLabel("Trip " + tripCounter + " - Total Price: €" + trip.getTotalPrice());
+        JLabel tripLabel = new JLabel("Trip " + tripCounter + "  -  Total Price: €" + trip.getTotalPrice() + "  -  Duration: " + duration + " days");
         tripLabel.setFont(new Font("Arial", Font.BOLD, 16));
         headerPanel.add(tripLabel);
         tripPanel.add(headerPanel, BorderLayout.NORTH);
@@ -171,7 +177,7 @@ public class DestinationResultView extends JFrame {
         JLabel departureLabel = new JLabel("Departure: " + dateFormat.format(parseIso8601Date(flight.getDepartureDateTime())));
         JLabel arrivalLabel = new JLabel("Arrival: " + dateFormat.format(parseIso8601Date(flight.getArrivalDateTime())));
         JLabel flightNumberLabel = new JLabel("Flight Number: " + flight.getFlightNumber());
-        JLabel priceLabel = new JLabel("Price: $" + flight.getPrice());
+        JLabel priceLabel = new JLabel("Price: €" + flight.getPrice());
 
         flightPanel.add(directionLabel);
         flightPanel.add(departureLabel);
@@ -182,12 +188,43 @@ public class DestinationResultView extends JFrame {
         return flightPanel;
     }
 
+    public static int getDaysDifference(String date1Str, String date2Str) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        Date date1, date2 = null;
+        try {
+            date1 = dateFormat.parse(date1Str);
+            date2 = dateFormat.parse(date2Str);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTime(date1);
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(date2);
+
+        calendar1.set(Calendar.HOUR_OF_DAY, 0);
+        calendar1.set(Calendar.MINUTE, 0);
+        calendar1.set(Calendar.SECOND, 0);
+        calendar1.set(Calendar.MILLISECOND, 0);
+
+        calendar2.set(Calendar.HOUR_OF_DAY, 0);
+        calendar2.set(Calendar.MINUTE, 0);
+        calendar2.set(Calendar.SECOND, 0);
+        calendar2.set(Calendar.MILLISECOND, 0);
+
+        // Calculate the difference in days
+        long timeDiff = calendar2.getTimeInMillis() - calendar1.getTimeInMillis();
+        return (int) (timeDiff / (24 * 60 * 60 * 1000));
+    }
+
     private Date parseIso8601Date(String isoDate) {
         SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC")); // ISO 8601 is generally in UTC
         try {
             return iso8601Format.parse(isoDate);
         } catch (ParseException e) {
+            // Should never be thrown!!!
             throw new RuntimeException(e);
         }
     }
