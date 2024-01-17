@@ -77,7 +77,7 @@ public class ActionHandler {
             }
         }
         for (String countryCode : destinationCountries){
-            for (Airport airport : inputPanel.airportsJsonFile.getAirports()){
+            for (Airport airport : parent.airportsJsonFile.getAirports()){
                 if(countryCode.equals(airport.getCountryCode())){
                     destinationAirportsCodes.add(airport.getAirportCode());
                 }
@@ -89,7 +89,7 @@ public class ActionHandler {
             JOptionPane.showMessageDialog(parent,"Please fill minDuration and maxDuration fields.", "Duration fields Error", JOptionPane.ERROR_MESSAGE);
             return;
         } else if (departureAirportsSet.isEmpty() || destinationAirports.isEmpty()){
-            JOptionPane.showMessageDialog(parent,"Please set at least one Departures and Destination fields.", "ields Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent,"Please set at least one Departures and Destination fields.", "Fields Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

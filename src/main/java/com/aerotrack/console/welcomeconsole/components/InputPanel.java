@@ -45,13 +45,11 @@ public class InputPanel {
 
     private final JScrollPane departureScrollPane;
     private final JScrollPane destinationScrollPane;
-    public final AirportsJsonFile airportsJsonFile;
+    private final AirportsJsonFile airportsJsonFile;
 
-
-    public InputPanel(AerotrackApp parent) {
+    public InputPanel(AerotrackApp parent, AirportsJsonFile airportsJsonFile) {
         this.parent = parent;
-        airportsJsonFile = parent.getAerotrackApiClient().getAirportsJson();
-
+        this.airportsJsonFile = airportsJsonFile;
         panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
@@ -63,8 +61,8 @@ public class InputPanel {
         startDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
         endDatePicker.getComponentDateTextField().setMaximumSize(inputSize);
 
-        minDaysField = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
-        maxDaysField = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+        minDaysField = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
+        maxDaysField = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
         minDaysField.setMaximumSize(inputSize);
         maxDaysField.setMaximumSize(inputSize);
 

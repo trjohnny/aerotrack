@@ -19,6 +19,7 @@ import com.aerotrack.console.resultconsole.DestinationsButtonsPanel;
 import com.aerotrack.console.welcomeconsole.components.ButtonManager;
 import com.aerotrack.console.welcomeconsole.components.InputPanel;
 import com.aerotrack.model.entities.AerotrackStage;
+import com.aerotrack.model.entities.AirportsJsonFile;
 import com.aerotrack.model.entities.Trip;
 import com.aerotrack.utils.clients.api.AerotrackApiClient;
 import lombok.Getter;
@@ -31,6 +32,8 @@ public class AerotrackApp extends JFrame {
     private final CardLayout cardLayout;
     private final JPanel mainPanel;
     private final DestinationsButtonsPanel destinationPanel ;
+    public final AirportsJsonFile airportsJsonFile;
+
 
     private AerotrackApp()  {
         try {
@@ -47,8 +50,10 @@ public class AerotrackApp extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        airportsJsonFile = aerotrackApiClient.getAirportsJson();
+
         mainPanel = new JPanel(new BorderLayout());
-        destinationPanel = new DestinationsButtonsPanel(this, null);
+        destinationPanel = new DestinationsButtonsPanel(this, null, airportsJsonFile);
 
         EmptyBorder border = new EmptyBorder(5,20,5,20);
 
@@ -58,7 +63,7 @@ public class AerotrackApp extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        InputPanel inputPanel = new InputPanel(this);
+        InputPanel inputPanel = new InputPanel(this, airportsJsonFile);
         inputPanel.getPanel().setBorder(border);
         mainPanel.add(inputPanel.getPanel(), BorderLayout.CENTER);
 

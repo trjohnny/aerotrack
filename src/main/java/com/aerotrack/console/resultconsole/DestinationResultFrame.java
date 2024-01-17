@@ -190,7 +190,7 @@ public class DestinationResultFrame extends JFrame {
 
     public static int getDaysDifference(String date1Str, String date2Str) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        Date date1, date2 = null;
+        Date date1, date2;
         try {
             date1 = dateFormat.parse(date1Str);
             date2 = dateFormat.parse(date2Str);
