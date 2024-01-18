@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 public class AerotrackApp extends JFrame {
+    private static final long MIN_SPLASH_SCREEN_DURATION_MILLIS = 2000;
     private final AerotrackApiClient aerotrackApiClient = AerotrackApiClient.create(AerotrackStage.ALPHA);
     private final CardLayout cardLayout;
     private final JPanel mainPanel;
@@ -74,31 +75,46 @@ public class AerotrackApp extends JFrame {
         getContentPane().add(destinationPanel, "DestinationPanel");
 
         cardLayout.show(getContentPane(), "MainPanel");
-
-        setVisible(true);
     }
 
     public static void main(String[] args) {
-        final SplashScreen splashScreen = new SplashScreen("src/main/resources/bg_logo.png");
+        final SplashScreen splashScreen = new SplashScreen();
+
+        long startTime = System.currentTimeMillis();
+
+        final AerotrackApp[] app = new AerotrackApp[1];
 
         Thread appThread = new Thread(() -> {
-            new AerotrackApp();
-            SwingUtilities.invokeLater(splashScreen::close);
+            app[0] = new AerotrackApp();
         });
-        appThread.start();
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            System.err.println(e.getMessage());
-        }
+        appThread.start();
 
         try {
             appThread.join();
         } catch (InterruptedException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Application initialization interrupted: " + e.getMessage());
         }
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+
+        long sleepDuration = Math.max(MIN_SPLASH_SCREEN_DURATION_MILLIS - duration, 0);
+        if (sleepDuration > 0) {
+            try {
+                Thread.sleep(sleepDuration);
+            } catch (InterruptedException e) {
+                System.err.println("Splash screen interrupted: " + e.getMessage());
+            }
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            app[0].setVisible(true);
+            splashScreen.close();
+        });
     }
+
+
 
     public void showDestinationPanel(Map<String, List<Trip>> destinationResults) {
         destinationPanel.setDestinationResults(destinationResults);
