@@ -101,6 +101,7 @@ public class ActionHandler {
         SwingWorker<List<Trip>, Void> worker = new SwingWorker<>() {
             @Override
             protected List<Trip> doInBackground() {
+                System.out.println(scanQueryRequest);
                 return parent.getAerotrackApiClient().getBestFlight(scanQueryRequest);
             }
 
@@ -119,6 +120,7 @@ public class ActionHandler {
                         JOptionPane.showMessageDialog(parent,"Error: Null response from API.", "Response Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception e) {
+                    System.out.println("Got generic exception: " + e);
                     JOptionPane.showMessageDialog(parent,"Error: An exception occurred during API call.", "Response Error", JOptionPane.ERROR_MESSAGE);
                 } finally {
                     buttonPanel.getComponent(0).setEnabled(true);

@@ -176,7 +176,7 @@ public class DestinationResultFrame extends JFrame {
         JLabel directionLabel = new JLabel("Flight: " + flight.getDirection());
         JLabel departureLabel = new JLabel("Departure: " + dateFormat.format(parseIso8601Date(flight.getDepartureDateTime())));
         JLabel arrivalLabel = new JLabel("Arrival: " + dateFormat.format(parseIso8601Date(flight.getArrivalDateTime())));
-        JLabel flightNumberLabel = new JLabel("Flight Number: " + flight.getFlightNumber());
+        JLabel flightNumberLabel = new JLabel("Airline: " + flight.getAirline());
         JLabel priceLabel = new JLabel("Price: €" + flight.getPrice());
 
         flightPanel.add(directionLabel);

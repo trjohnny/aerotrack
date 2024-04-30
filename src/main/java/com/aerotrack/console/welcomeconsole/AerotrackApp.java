@@ -22,6 +22,7 @@ import com.aerotrack.model.entities.AerotrackStage;
 import com.aerotrack.model.entities.AirportsJsonFile;
 import com.aerotrack.model.entities.Trip;
 import com.aerotrack.utils.clients.api.AerotrackApiClient;
+import com.aerotrack.utils.clients.s3.AerotrackS3Client;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,14 +30,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AerotrackApp extends JFrame {
     private static final long MIN_SPLASH_SCREEN_DURATION_MILLIS = 2000;
-    private final AerotrackApiClient aerotrackApiClient = AerotrackApiClient.create(AerotrackStage.ALPHA);
+    private final AerotrackApiClient aerotrackApiClient = AerotrackApiClient.create(AerotrackStage.PROD);
     private final CardLayout cardLayout;
     private final JPanel mainPanel;
     private final DestinationsButtonsPanel destinationPanel ;
     public final AirportsJsonFile airportsJsonFile;
 
 
-    private AerotrackApp()  {
+    private AerotrackApp() throws IOException {
         try {
             this.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getResource("/logo.png"))));
         } catch (IOException e) {
@@ -51,7 +52,7 @@ public class AerotrackApp extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        airportsJsonFile = aerotrackApiClient.getAirportsJson();
+        airportsJsonFile = aerotrackApiClient.getMergetAirportsJson();
 
         mainPanel = new JPanel(new BorderLayout());
         destinationPanel = new DestinationsButtonsPanel(this, null, airportsJsonFile);
@@ -77,24 +78,15 @@ public class AerotrackApp extends JFrame {
         cardLayout.show(getContentPane(), "MainPanel");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        log.error("lkdcnswjkdc");
         final SplashScreen splashScreen = new SplashScreen();
 
         long startTime = System.currentTimeMillis();
 
         final AerotrackApp[] app = new AerotrackApp[1];
 
-        Thread appThread = new Thread(() -> {
-            app[0] = new AerotrackApp();
-        });
-
-        appThread.start();
-
-        try {
-            appThread.join();
-        } catch (InterruptedException e) {
-            System.err.println("Application initialization interrupted: " + e.getMessage());
-        }
+        app[0] = new AerotrackApp();
 
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
